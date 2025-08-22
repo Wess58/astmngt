@@ -1,0 +1,26 @@
+.side-nav {
+  background-color: #fff;
+  border-right: 1px solid #f1f1f1;
+  height: 100dvh;
+  padding-top: 80px;
+
+  .main-list {
+    padding: 10px;
+    list-style: none;
+
+    .nav-item {
+      padding: 10px 20px;
+	  margin-bottom: 2px;
+	  border-radius: 12px;
+	  cursor: pointer;
+
+	  &:hover{
+		background-color: #f1f1f1;
+	  }
+    }
+
+	.active-nav-item{
+		background-color: #009B77;
+	}
+  }
+}

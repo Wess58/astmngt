@@ -1,0 +1,8 @@
+.outlet{
+	display: grid;
+	grid-template-columns: 300px auto;
+}
+
+.main-outlet{
+	min-height: calc(100svh - (56px));
+}

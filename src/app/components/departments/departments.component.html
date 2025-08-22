@@ -1,0 +1,270 @@
+<div class="container-fluid home-page departments">
+	<div class="container">
+
+		<div class="card card-table">
+
+			<div class="table-header-section">
+				<div>
+					<h4 class="table-title"> Departments
+						<small class="table-subtitle" *ngIf="!loadingDepartments && totalLength"
+							[@fadeIn]>({{totalLength}}
+							items)</small>
+					</h4>
+
+				</div>
+				<div>
+					<!-- <button class="btn btn-download me-3" title="Redirects to Download File Metadata in Excel"
+						(click)="createBatchTask()" [disabled]="prepareBatch">
+						<span class="m-0"><i class="fa-solid fa-file-arrow-down"></i></span>
+					</button> -->
+					<button class="btn btn-create me-3" data-bs-toggle="modal" data-bs-target="#createDepartmentModal"
+						(click)="resetDepartment()">
+						<span><i class="fa-solid fa-plus"></i></span>&nbsp; Create department
+					</button>
+					<button class="btn btn-refresh" title="Refresh departments" (click)="getDepartments(page)">
+						<span><i class="fa-solid fa-sync"></i></span>&nbsp; Refresh
+					</button>
+				</div>
+			</div>
+
+
+			<span class="filter-text">Filtering options</span>
+			<div class="filter-wrapper">
+
+				<div class="wrap ms-0">
+					<select class="form-control" name="status" [(ngModel)]="filters.status"
+						(change)="getDepartments(1)">
+						<option value="">All statuses</option>
+						<option *ngFor="let status of statuses;index as i" [value]="status">{{status}} </option>
+					</select>
+				</div>
+
+				<div class="wrap ms-0">
+					<select class="form-control" name="location" [(ngModel)]="filters.location"
+						(change)="getDepartments(1)">
+						<option value="">All locations</option>
+						<option *ngFor="let location of locations;index as i" [value]="location.id">{{location.name}}
+						</option>
+					</select>
+				</div>
+
+				<div class="wrap">
+					<input type="text" class="form-control" placeholder="name" name="name" [(ngModel)]="filters.name"
+						(keyup.enter)="getDepartments(1)" />
+				</div>
+
+				<div class="wrap">
+					<button class="btn btn-refresh" title="Search departments" [disabled]="loadingDepartments"
+						(click)="getDepartments(1)">
+						<span><i class="fa-solid fa-search"></i></span>&nbsp; Search
+					</button>
+				</div>
+
+				<div class="wrap">
+					<button class="btn btn-clear-filters" [disabled]="loadingDepartments" (click)="resetFilters()">
+						clear filters
+					</button>
+				</div>
+			</div>
+
+			<div class="donut-container" *ngIf="loadingDepartments" [@fadeIn]>
+				<div class="donut-wrapper">
+					<div class="donut multi"></div>
+				</div>
+			</div>
+
+			<table class="table" *ngIf="departments.length && !loadingDepartments" [@fadeIn]>
+				<thead>
+					<tr>
+						<th scope="col">Name</th>
+						<th scope="col">Contact details</th>
+						<th scope="col">Location</th>
+						<th scope="col">Status</th>
+						<th scope="col">Created on</th>
+						<th scope="col" class="text-center" width="100px">
+							Actions
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						*ngFor="let department of departments | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalLength}; index as i">
+						<td>
+							{{ department.name }}
+						</td>
+						<td>
+							<span class="d-block">{{ department.msisdn ?? '—' }}</span>
+							<span class="d-block text-muted">{{ department.email ?? '—' }}</span>
+						</td>
+						<td> {{ department?.location?.name }} </td>
+						<td>
+							<span class="badge" [ngClass]="{
+								'badge-success':department?.status === 'ACTIVE',
+								'badge-danger':department?.status === 'INACTIVE',
+								'badge-primary':department?.status === 'NEW'
+								}">{{ department?.status }}</span>
+						</td>
+						<td>
+							{{(department.createdOn | date : 'MMM d y , HH:mm') ?? '—'}}
+						</td>
+						<td class="text-center">
+							<div class="dropdown">
+								<!-- *jhiHasAnyAuthority="['MAKER', 'DFS_CUSTOMER_PROFILE', 'RF_ADMIN']" -->
+								<button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
+									data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<!-- [ngClass]="{'not-allowed':department?.status !== 'ACTIVE'}" -->
+									Actions
+								</button>
+								<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+									<a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#createDepartmentModal"
+										(click)="selectDepartment(department,'EDIT')">
+										Edit
+									</a>
+									<!-- <a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#departmentActionModal"
+										(click)="selectDepartment(department,'ACTIVATE')"
+										[hidden]="department?.status === 'ACTIVE'">
+										Activate
+									</a>
+									<a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#departmentActionModal"
+										(click)="selectDepartment(department,'DEACTIVATE')"
+										[hidden]="department?.status !== 'ACTIVE'">
+										Deactivate
+									</a> -->
+									<a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#departmentActionModal"
+										(click)="selectDepartment(department,'DELETE')">
+										Delete
+									</a>
+
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="pagination-container" align="center" class="mt-4"
+				*ngIf="totalLength > itemsPerPage && departments?.length && !loadingDepartments" [@fadeIn]>
+				<pagination-controls (pageChange)="getDepartments((page = $event))" [maxSize]="7" previousLabel=""
+					nextLabel=""></pagination-controls>
+			</div>
+
+			<div class="text-center my-5" *ngIf="!departments.length && !loadingDepartments">
+				<span class="text-muted">No departments found</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<!-- Create / Edit Department Modal -->
+<div class="modal fade" id="createDepartmentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">{{department?.id ? 'Edit' : 'Create'}} department </h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeEditModal"></button>
+			</div>
+			<div class="modal-body px-4">
+
+
+				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
+					<strong>Failed to {{(department?.id ? 'edit' : 'create')}} department! </strong> {{errorMessage}}.
+				</div>
+
+				<form class="row">
+
+
+					<div class="form-group col-md-6">
+						<label for="">Name</label>
+						<input type="text" class="form-control" name="name" [(ngModel)]="department.name"
+							placeholder="Enter name" autocomplete="off">
+					</div>
+
+					<div class="form-group col-md-6">
+						<label for="">Email
+							<small class="red-text fw-normal fst-italic ms-2" *ngIf="emailInvalid" [@fadeIn]>
+								Email is invalid</small>
+						</label>
+						<div class="position-relative">
+							<input type="text" class="form-control" name="email" [(ngModel)]="department.email"
+								(ngModelChange)="emailInvalid = false" (ngModelDebounceChange)="validateEmail()"
+								[ngModelOptions]="{standalone: true}" placeholder="Enter email departmentname"
+								autocomplete="off">
+						</div>
+					</div>
+
+					<div class="form-group col-md-6">
+						<label for="">Mobile number </label>
+						<!-- <small class="label-desc">Required for login via OTP</small> -->
+						<input type="text" class="form-control" placeholder="Enter mobile number" name="msisdn"
+							[(ngModel)]="department.msisdn" pattern="[0-9]*" inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0/,254).replace(/^7/,2547).replace(/(\..*)\./g, '$1');" />
+					</div>
+
+					<div class="form-group col-md-6">
+						<label>Location</label>
+						<select class="form-control" name="location" [(ngModel)]="department.location.id"
+							required="required">
+							<option *ngFor="let location of locations;index as i" [value]="location.id">
+								{{location.name}} </option>
+						</select>
+					</div>
+
+				</form>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-submit"
+					(click)="department?.id ? editDepartment() : createDepartment()"
+					[disabled]="performingAction || emailInvalid || !department.name">
+					{{performingAction ? 'Submitting ...' : 'Submit'}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Activate / Deactivate / Delete Department Modal -->
+<div class="modal fade" id="departmentActionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">{{action | titlecase}} department </h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeDepartmentActionModal"></button>
+			</div>
+			<div class="modal-body py-4">
+
+				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
+					<strong>Failed to {{action | lowercase}} department! </strong> {{errorMessage}}.
+				</div>
+
+				You are about to <strong [ngClass]="action !== 'ACTIVATE' ? 'red-text' : 'green-text'">
+					{{action | lowercase}} </strong>
+				<strong>{{department?.name}}'s</strong>
+				department. Would you like to proceed?
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+
+				<button type="button" class="btn" [ngClass]="action !== 'ACTIVATE' ? 'btn-delete'  : 'btn-submit'"
+					(click)="action === 'DELETE' ? deleteDepartment() : editDepartment()"
+					[disabled]="performingAction">{{action |
+					titlecase}}</button>
+
+			</div>
+		</div>
+	</div>
+</div>

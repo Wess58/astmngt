@@ -39,9 +39,12 @@
               }
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -69,6 +72,12 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "tecom-rg:build:development",
+            "proxyConfig": "proxy.conf.json",
+            "port": 4200,
+            "disableHostCheck": true
+          },
           "configurations": {
             "production": {
               "buildTarget": "astmng:build:production"

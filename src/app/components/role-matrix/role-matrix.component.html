@@ -1,0 +1,181 @@
+<div class="container-fluid home-page role-matrix-page">
+
+	<div class="container">
+
+		<div class="card card-table">
+
+			<div class="table-header-section">
+				<div>
+					<h4 class="table-title"> Role Matrix
+					</h4>
+				</div>
+				<div>
+
+					<!-- <button class="btn btn-download me-3" title="Download File in PDF" (click)="generatePDF()">
+						<span class="m-0"><i class="fa-solid fa-file-arrow-down"></i></span>
+					</button> -->
+					<button class="btn btn-create me-3" data-bs-toggle="modal" data-bs-target="#createRoleModal"
+						(click)="resetRole()">
+						<!-- *hasOperation="['manageRoles']" -->
+						<span><i class="fa-solid fa-plus"></i></span>&nbsp; Create role
+					</button>
+					<button class="btn btn-refresh" title="Refresh" [disabled]="loadingRoles"
+						(click)="getRoles();getMenusAndOperations()">
+						<span><i class="fa-solid fa-sync"></i></span> Refresh
+					</button>
+				</div>
+			</div>
+
+
+			<div class="donut-container" *ngIf="loadingRoles" [@fadeIn]>
+				<div class="donut-wrapper">
+					<div class="donut multi"></div>
+				</div>
+			</div>
+
+
+			<table class="table" id="roleMatrixList" *ngIf="roles?.length && !loadingRoles" [@fadeIn]>
+				<thead>
+					<tr>
+						<th scope="col">Name</th>
+						<th scope="col">Code</th>
+						<th scope="col">Available Menus</th>
+						<th scope="col" width="25%">Available Operations</th>
+						<th scope="col" width="100px" *hasOperation="['manageRoles']">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let role of roles; index as i">
+						<td> {{role.roleName}} </td>
+						<td>
+							<span class="badge badge-primary">{{ role.roleCode }}</span>
+						</td>
+						<td>
+							@if (role?.menus?.length) {
+							<ul>
+								<li [hidden]="!menu.checked" *ngFor="let menu of role.menus">
+									{{menu.name}}
+								</li>
+							</ul>
+							} @else{
+							no menus
+							}
+						</td>
+						<td>
+
+							@if (role?.operations?.length) {
+							<ul>
+								<li [hidden]="!operation.checked" *ngFor="let operation of role.operations">
+									{{operation.name}}
+								</li>
+							</ul>
+							} @else{
+							no operations
+							}
+						</td>
+						<td class="text-center" *hasOperation="['manageRoles']">
+							<div class="dropdown">
+								<button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
+									data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									Actions
+								</button>
+								<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+									<!-- <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createRoleModal"
+										(click)="selectRole(role)">
+										Edit
+									</a> -->
+									<!-- <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
+										(click)="selectUser(user)" [hidden]="currentUser.login === user.login">
+										Delete
+									</a> -->
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+			<div class="text-center my-5" *ngIf="!roles.length && !loadingRoles && !isNotAuthorized" [@fadeIn]>
+				<span class="text-muted">No roles found</span>
+			</div>
+
+			<div class="alert alert-danger text-center my-5" *ngIf="isNotAuthorized" [@fadeIn]>
+				<span [innerHTML]="isNotAuthorizedMessage"></span>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Create / Edit Role Modal -->
+<div class="modal fade" id="createRoleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title" id="exampleModalLabel">{{role?.id ? 'Edit' : 'Create'}} role </h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeEditModal"></button>
+			</div>
+			<div class="modal-body">
+
+				<small class="request-desc d-flex">
+					<strong class="red-text d-block me-2">*</strong>
+					<span>
+						This operation is treated as <strong>a request</strong>.
+						This means it will be <strong>reviewed and processed</strong> after submission.
+					</span>
+				</small>
+
+				<div class="alert alert-danger" *ngIf="operationFailed" [@fadeIn]>
+					<strong>Failed to {{role?.id ? 'edit' : 'create'}} role! </strong> Please try again in 15 minutes.
+				</div>
+
+				<form>
+
+					<div class="form-group">
+						<label for="roleName">Role name</label>
+						<input type="text" class="form-control" name="roleName" [(ngModel)]="role.name"
+							placeholder="Enter role name, eg : User Management" autocomplete="off">
+					</div>
+
+					<div class="form-group ps-1">
+						<label for="menus" class="ms-0">Menus</label>
+						<small class="d-block text-muted mb-3">Select menus to assign to this role;</small>
+
+						<div class="row mx-1">
+							<div class="checkbox-item col-md-4" *ngFor="let menu of menus;index as i"
+								(click)="selectMenus(i)">
+								<input type="checkbox" name="menu-{{i}}" [checked]="menu.checked" />
+								<span> {{menu.name}} </span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="form-group ps-1">
+						<label for="operations" class="ms-0">Operations</label>
+						<small class="d-block text-muted mb-3">Select operations to assign to this role;</small>
+
+						<div class="row mx-1">
+							<div class="checkbox-item col-md-4" *ngFor="let operation of operations;index as i"
+								(click)="selectOperations(i)">
+								<input type="checkbox" name="operation-{{i}}" [checked]="operation.checked" />
+								<span> {{operation.name}} </span>
+							</div>
+						</div>
+					</div>
+
+				</form>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+
+				<button type="button" class="btn btn-submit" (click)="role.id ? editRole() : createRole()"
+					[disabled]="createEditRole || !role.name || !hasSelectedMenus || !hasSelectedOperations">{{createEditRole
+					? 'Submitting ...' : 'Submit'}}</button>
+			</div>
+		</div>
+	</div>
+</div>

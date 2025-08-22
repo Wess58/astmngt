@@ -1,0 +1,144 @@
+<div class="container login-page">
+	<div class="w-100">
+		<div class="row justify-content-center">
+			<div class="col-md-5">
+				<div class="card login-card">
+
+					<div class="logo-section">
+						<!-- <img src="../../assets/images/hfc-logo.png" alt="" class="logo" /> -->
+						<span class="logo-wordmark">Asset Management Portal</span>
+					</div>
+
+					<form class="form" role="form" *ngIf="stage === 'getOTPStage'" [@fadeIn]>
+
+						<div class="alert alert-danger" *ngIf="authenticationError" data-cy="loginError" [@fadeIn]>
+							<strong>Failed to Login! </strong> {{errorMessage}}
+						</div>
+
+						<h4>Login</h4>
+
+						<p class="instruction">Enter your credentials and click Login</p>
+
+						<div class="form-group row mb-4">
+							<div class="col-md-12">
+								<span><i class="fa-solid fa-user"></i></span>
+								<input type="text" class="form-control" name="username" id="username"
+									placeholder="login" (ngModelChange)="authenticationError = false"
+									[(ngModel)]="login.username" #username data-cy="username" />
+							</div>
+						</div>
+
+						<div class="form-group row mb-3">
+							<div class="col-md-12">
+								<span><i class="fa-solid fa-lock"></i></span>
+
+								<input type="password" class="form-control" name="password" id="password"
+									placeholder="password" (ngModelChange)="authenticationError = false"
+									[(ngModel)]="login.password" data-cy="password" />
+								<span><i class="fa-solid eye-icon" [ngClass]="{ 'fa-eye': open, 'fa-eye-slash': !open }"
+										(click)="showPassword()"></i></span>
+							</div>
+						</div>
+
+						<!-- <div class="row mb-5">
+								<div class="col-md-6 text-right">
+									<span [routerLink]="['/account/reset/request']" data-cy="forgetYourPasswordSelector"
+										class="forgot-password">Forgot password ?</span>
+								</div>
+							</div> -->
+
+						<div class="row mt-4">
+							<div class="col-md-12">
+								<button type="submit" class="btn btn-login" data-cy="submit" (click)="requestOTP()"
+									[disabled]="logingIn">LOGIN</button>
+							</div>
+						</div>
+					</form>
+
+					<form class="form" role="form" *ngIf="stage === 'verifyOTPStage'" [@fadeIn]>
+						<div class="alert alert-danger" *ngIf="authenticationError && !resendError" data-cy="loginError"
+							[@fadeIn]>
+							<strong>Failed to sign in!</strong> {{ errorMessage }}.
+						</div>
+
+						<div class="alert alert-danger" *ngIf="resendError" data-cy="resendError" [@fadeIn]>
+							<strong>Failed to resend OTP!</strong> Please try again.
+						</div>
+
+						<div class="row">
+							<div class="col-md-3">
+								<button type="button" class="btn btn-back" (click)="back()">
+									<span><i class="fa-solid fa-arrow-left"></i></span> <span> Back</span>
+								</button>
+							</div>
+						</div>
+
+						<h4>Enter OTP</h4>
+
+						<p class="instruction">Enter SMS One Time PIN (OTP) and click Submit</p>
+
+						<div class="form-group row mb-4">
+							<div class="col-md-12">
+								<span><i class="fa-solid fa-lock"></i></span>
+								<input type="text" class="form-control" name="otp" id="otp" placeholder="OTP code"
+									[(ngModel)]="login.otp" maxlength="6" data-cy="otp" autocomplete="off" autofocus />
+							</div>
+						</div>
+
+						<div class="row mt-4">
+							<div class="col-md-6 text-center">
+								<button type="button" class="btn btn-resend mb-2" (click)="resendOTP()"
+									[disabled]="time !== '00'">RESEND OTP</button>
+								<span *ngIf="time && time !== '00'" class="text-light"> Resend in 00:{{ time }}</span>
+							</div>
+							<div class="col-md-6">
+								<button type="submit" class="btn btn-login" data-cy="submit"
+									(click)="verifyOTP()">SUBMIT</button>
+							</div>
+						</div>
+					</form>
+
+					<!-- <form class="form" role="form" *ngIf="stage === 'verifyTOTPStage'" [@fadeIn]>
+							<div class="alert alert-danger" *ngIf="authenticationError && !resendError" data-cy="loginError"
+								[@fadeIn]>
+								<strong>Failed to sign in!</strong> {{ otpErrorMessage }}. You can login using SMS OTP by
+								clicking
+								<a style="text-decoration: underline; color: blue" (click)="requestSMSOTP()">here</a>
+							</div>
+		
+							<div class="row">
+								<div class="col-md-3">
+									<button type="button" class="btn btn-back" (click)="back()">
+										<span><i class="fa-solid fa-arrow-left"></i></span> <span> Back</span>
+									</button>
+								</div>
+							</div>
+		
+							<h4>Enter OTP</h4>
+		
+							<p class="instruction">Enter One Time PIN (OTP) from Microsoft Authenticator and click Submit</p>
+		
+							<div class="form-group row mb-4">
+								<div class="col-md-12">
+									<span><i class="fa-solid fa-lock"></i></span>
+									<input type="text" class="form-control" name="totp" id="totp" placeholder="OTP code"
+										[(ngModel)]="login.totp" data-cy="totp" autocomplete="off" autofocus />
+								</div>
+							</div>
+		
+							<div class="mt-4">
+								<button type="submit" class="btn btn-login mb-3" data-cy="submit" (click)="loginWith2FA()"
+									[disabled]="logingIn || !login.totp">
+									SUBMIT
+								</button>
+								<p class="alternative-login-divider">or</p>
+								<div class="divider"></div>
+								<a (click)="requestSMSOTP()" class="sms-login">Request SMS OTP</a>
+							</div>
+						</form> -->
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

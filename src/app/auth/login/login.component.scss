@@ -1,0 +1,162 @@
+/* orange - var(--app-light-blue) */
+/* blue - var(--app-dark-blue) */
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login-card {
+  background-color: var(--app-light-blue);
+  margin-bottom: 30px;
+  overflow: hidden;
+
+  .logo-section {
+    width: 100%;
+    background-color: #fff;
+    margin-bottom: 50px;
+    padding: 10px;
+
+    .logo {
+      height: 55px;
+    }
+
+    .logo-wordmark {
+      color: var(--app-light-blue);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+  }
+
+  form {
+    padding: 0 40px;
+
+    h4 {
+      color: var(--app-dark-blue);
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .instruction {
+      color: #f1f1f1;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      position: relative;
+
+      .fa-lock,
+      .fa-user {
+        position: absolute;
+        left: 30px;
+        top: 15px;
+        // padding-top: 10px !important;
+      }
+
+      input {
+        border: 2px solid var(--app-light-blue) !important;
+        padding-left: 50px !important;
+
+        &:active,
+        &:focus,
+        &:hover {
+          border: 2px solid var(--app-dark-blue) !important;
+        }
+      }
+    }
+
+    .eye-icon {
+      position: absolute;
+      top: 17px;
+      right: 30px;
+      cursor: pointer;
+    }
+
+    .form-check {
+      cursor: pointer;
+
+      span {
+        color: #fff;
+        font-size: 0.9rem;
+        cursor: pointer;
+
+        &::selection {
+          background-color: transparent !important;
+        }
+      }
+    }
+
+    .forgot-password {
+      font-size: 0.9rem;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+        color: var(--app-dark-blue);
+      }
+    }
+
+    .btn-login {
+      background-color: var(--app-dark-blue);
+      width: 100%;
+      margin-bottom: 70px;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .btn-resend {
+      background-color: #e1e1e1;
+      width: 100%;
+      margin-bottom: 70px;
+      color: #5f6063;
+      letter-spacing: 1px;
+    }
+
+    .btn-back {
+      background-color: #e1e1e1;
+      width: 100%;
+      margin-bottom: 30px;
+      color: #5f6063;
+      letter-spacing: 1px;
+      font-size: 0.9rem;
+
+      i {
+        display: inline-block;
+        margin-right: 5px;
+      }
+    }
+
+    .alternative-login-divider {
+      text-align: center;
+      background-color: var(--app-light-blue);
+      width: 40px;
+      margin: auto;
+      position: relative;
+      z-index: 10 !important;
+      color: #fff;
+    }
+
+    .divider {
+      height: 1px;
+      width: 100%;
+      background-color: #fff;
+      position: relative;
+      top: -12px;
+      z-index: 0 !important;
+      margin-bottom: 20px;
+    }
+
+    .sms-login {
+      color: #3c4043;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-bottom: 30px;
+      display: block;
+      text-align: center;
+    }
+  }
+}

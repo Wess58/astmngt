@@ -1,0 +1,52 @@
+<nav class="navbar navbar-expand-lg fixed-top" *ngIf="!router.url.includes('login')" [@fadeIn]>
+	<div class="container-fluid">
+
+		<a class="navbar-brand d-flex align-items-center" [routerLink]="userHomeUrl">
+			<!-- <img src="../../assets/images/hfc-logo.png" alt="" class="nav-logo" /> -->
+			<span class="platform-name">Asset Management Portal</span>
+		</a>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+			aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+			<ul class="navbar-nav">
+
+				<li class="nav-item" 
+					*ngFor="let menuItem of menusList;index as i" [routerLink]="[menuItem.path]"
+					[ngClass]="{'active-nav-item':router.url.includes(menuItem.path.replace('/',''))}">
+					<!-- [hidden]="!currentUser?.menus?.includes(menuItem.title)" -->
+					<a class="nav-link"> {{menuItem.title | formatNavTitle }} </a>
+				</li>
+
+				<!-- <li class="nav-item" *ngIf="currentUser?.role === 'ADMIN'" [routerLink]="['user-management']"
+					[ngClass]="{'active-nav-item':router.url.includes('user-management')}">
+					<a class="nav-link">User management</a>
+				</li> -->
+
+				<li class="nav-item dropdown border-0">
+					<a class="nav-link dropdown-toggle profile-nav-link" role="button" data-bs-toggle="dropdown"
+						aria-expanded="false">
+						<div>
+							<span class="profile-icon">
+								<span>{{currentUser?.name?.charAt(0)}}</span>
+							</span>
+						</div>
+						<div class="d-inline-flex flex-column me-3">
+							<span>{{currentUser?.name | titlecase}}</span>
+							<span class="role">{{currentUser?.role?.code?.replaceAll('_',' ')}}</span>
+						</div>
+						<span><i class="fa-solid fa-sort-down"></i></span>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-end">
+						<li><a class="dropdown-item" (click)="logout()">
+								<span><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+								Sign Out
+							</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>

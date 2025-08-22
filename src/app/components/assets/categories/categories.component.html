@@ -1,0 +1,376 @@
+<div class="container-fluid home-page assetCategories">
+	<div class="container">
+
+		<div class="card card-table">
+
+			<div class="table-header-section">
+				<div>
+					<h4 class="table-title"> Asset Categories
+						<small class="table-subtitle" *ngIf="!loadingCategories && totalLength"
+							[@fadeIn]>({{totalLength}}
+							items)</small>
+					</h4>
+
+				</div>
+				<div>
+					<!-- <button class="btn btn-download me-3" title="Redirects to Download File Metadata in Excel"
+						(click)="createBatchTask()" [disabled]="prepareBatch">
+						<span class="m-0"><i class="fa-solid fa-file-arrow-down"></i></span>
+					</button> -->
+					<button class="btn btn-create me-3" data-bs-toggle="modal"
+						data-bs-target="#createAssetCategoryModal" (click)="resetAssetCategory()">
+						<span><i class="fa-solid fa-plus"></i></span>&nbsp; Create category
+					</button>
+					<button class="btn btn-refresh" title="Refresh categories" (click)="getAssetCategories(page)">
+						<span><i class="fa-solid fa-sync"></i></span>&nbsp; Refresh
+					</button>
+				</div>
+			</div>
+
+
+			<span class="filter-text">Filtering options</span>
+			<div class="filter-wrapper">
+
+				<div class="wrap ms-0">
+					<select class="form-control" name="status" [(ngModel)]="filters.status"
+						(change)="getAssetCategories(1)">
+						<option value="">All statuses</option>
+						<option *ngFor="let status of statuses;index as i" [value]="status">{{status}} </option>
+					</select>
+				</div>
+
+				<div class="wrap">
+					<input type="text" class="form-control" placeholder="name" name="name" [(ngModel)]="filters.name"
+						(keyup.enter)="getAssetCategories(1)" />
+				</div>
+
+				<div class="wrap">
+					<button class="btn btn-refresh" title="Search categories" [disabled]="loadingCategories"
+						(click)="getAssetCategories(1)">
+						<span><i class="fa-solid fa-search"></i></span>&nbsp; Search
+					</button>
+				</div>
+
+				<div class="wrap">
+					<button class="btn btn-clear-filters" [disabled]="loadingCategories" (click)="resetFilters()">
+						clear filters
+					</button>
+				</div>
+			</div>
+
+			<div class="donut-container" *ngIf="loadingCategories" [@fadeIn]>
+				<div class="donut-wrapper">
+					<div class="donut multi"></div>
+				</div>
+			</div>
+
+			<table class="table" *ngIf="assetCategories.length && !loadingCategories" [@fadeIn]>
+				<thead>
+					<tr>
+						<th scope="col">Name</th>
+						<th scope="col">Contact details</th>
+						<th scope="col">Location</th>
+						<th scope="col">Status</th>
+						<th scope="col">Created on</th>
+						<th scope="col" class="text-center" width="100px">
+							Actions
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						*ngFor="let category of assetCategories | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalLength}; index as i">
+						<td>
+							{{ category.name }}
+						</td>
+						<td>
+							<span class="d-block">{{ category.msisdn ?? '—' }}</span>
+							<span class="d-block text-muted">{{ category.email ?? '—' }}</span>
+						</td>
+						<td> {{ category?.location?.name }} </td>
+						<td>
+							<span class="badge" [ngClass]="{
+								'badge-success':category?.status === 'ACTIVE',
+								'badge-danger':category?.status === 'INACTIVE',
+								'badge-primary':category?.status === 'NEW'
+								}">{{ category?.status }}</span>
+						</td>
+						<td>
+							{{(category.createdOn | date : 'MMM d y , HH:mm') ?? '—'}}
+						</td>
+						<td class="text-center">
+							<div class="dropdown">
+								<!-- *jhiHasAnyAuthority="['MAKER', 'DFS_CUSTOMER_PROFILE', 'RF_ADMIN']" -->
+								<button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
+									data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<!-- [ngClass]="{'not-allowed':category?.status !== 'ACTIVE'}" -->
+									Actions
+								</button>
+								<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+									<a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#createAssetCategoryModal"
+										(click)="selectAssetCategory(category,'EDIT')">
+										Edit
+									</a>
+									<!-- <a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#categoryActionModal"
+										(click)="selectAssetCategory(category,'ACTIVATE')"
+										[hidden]="category?.status === 'ACTIVE'">
+										Activate
+									</a>
+									<a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#categoryActionModal"
+										(click)="selectAssetCategory(category,'DEACTIVATE')"
+										[hidden]="category?.status !== 'ACTIVE'">
+										Deactivate
+									</a> -->
+									<a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#categoryActionModal"
+										(click)="selectAssetCategory(category,'DELETE')">
+										Delete
+									</a>
+
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="pagination-container" align="center" class="mt-4"
+				*ngIf="totalLength > itemsPerPage && assetCategories?.length && !loadingCategories" [@fadeIn]>
+				<pagination-controls (pageChange)="getAssetCategories((page = $event))" [maxSize]="7" previousLabel=""
+					nextLabel=""></pagination-controls>
+			</div>
+
+			<div class="text-center my-5" *ngIf="!assetCategories.length && !loadingCategories">
+				<span class="text-muted">No asset categories found</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<!-- Create / Edit AssetCategory Modal -->
+<div class="modal fade" id="createAssetCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">{{assetCategory?.id ? 'Edit' : 'Create'}} asset category
+				</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeEditModal"></button>
+			</div>
+			<div class="modal-body px-4">
+
+
+				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
+					<strong>Failed to {{(assetCategory?.id ? 'edit' : 'create')}} asset category! </strong>
+					{{errorMessage}}.
+				</div>
+
+				<form class="row" *ngIf="!showCreateColumn" [@fadeIn]>
+
+					<div class="form-group col-md-6">
+						<label for="">Name</label>
+						<input type="text" class="form-control" name="name" [(ngModel)]="assetCategory.name"
+							placeholder="Enter name" autocomplete="off">
+					</div>
+
+					<div class="d-flex justify-content-between mt-2">
+						<div class="w-75">
+							<span class="d-block fw-bold text-muted">Define asset fields </span>
+							<small class="d-block mb-4 text-muted">These fields will guide how data is
+								structured and validated for an asset.
+							</small>
+						</div>
+
+						<div>
+							<button class="btn btn-create" (click)="resetCustomeField();showCreateColumn = true">
+								<span class="me-1"><i class="fa-solid fa-plus"></i></span>
+								Add custom field
+							</button>
+						</div>
+					</div>
+
+					<!-- TABLE -->
+					<ng-container *ngIf="customerFields?.length else noColumn">
+						<table class="table mb-5">
+							<thead>
+								<tr>
+									<th [width]="checkIfSelectValuesExist() ? '25%' : '50%'">Label</th>
+									<th width="15%">Type</th>
+									<th width="255" *ngIf="checkIfSelectValuesExist()">Select values</th>
+									<th width="15%">Required</th>
+									<th width="15%">Unique</th>
+									<th width="100px">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let column of customerFields;index as i"
+									class="hover:bg-gray-50 transition cursor-pointer border-b border-gray-100 last:border-none">
+									<td class="break-words">{{ column?.label }}
+									</td>
+
+									<td class="break-words">{{ column?.formElement}}
+									</td>
+									<td class="break-words" *ngIf="checkIfSelectValuesExist()">
+										{{ column?.values ?? '—'}}
+									</td>
+									<td class="break-words">{{ column?.required ? 'Yes' : 'No'}}
+									</td>
+									<td class="break-words">{{ column?.unique ? 'Yes' : 'No'}}
+									</td>
+									<!-- Actions Dropdown -->
+									<td class="px-4 py-2 text-center">
+										<!-- Toggle Button -->
+										<button type="button" (click)="deleteColumnFromTemplate(i)"
+											class="btn btn-delete">
+											<i class="fa-solid fa-trash"></i>
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</ng-container>
+
+					<ng-template #noColumn>
+						<p class="mt-3 mb-5 text-center text-muted">No columns added</p>
+					</ng-template>
+
+				</form>
+
+
+				<ng-container *ngIf="showCreateColumn">
+
+					<div class="d-flex justify-content-between">
+						<button class="btn btn-back mb-3" (click)="checkActionCreateTemp()">
+							<span><i class="fa-solid fa-arrow-left"></i></span>
+							Back
+						</button>
+					</div>
+
+					<span class="d-block text-muted mb-2"><span class="red-text">*</span>
+						Enter the field details, then click <strong>Add field</strong> to add it.</span>
+
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label for="name" class="block text-sm font-medium text-gray-700">Field name <span
+									*ngIf="checkIfExists()"
+									class="animate-fade-in font-normal text-sm text-red-500 ml-2">field already
+									exists</span></label>
+							<input type="text" class="form-control" name="label" [(ngModel)]="customField.label"
+								placeholder="eg: Model number, Chassis number" autocomplete="off" />
+						</div>
+
+						<div class="form-group col-md-6 px-3">
+							<label class="block text-sm font-medium text-gray-700">Field type</label>
+							<select name="type" [(ngModel)]="customField.formElement" class="form-control">
+								<option *ngFor="let type of columnTypes" [value]="type">
+									{{ type === 'Select' ? type + ' (dropdown)' : type }}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group" *ngIf="customField.formElement === 'Select'" [@fadeIn]>
+						<label class="ms-0 mb-0" for="name">Select / Dropdown values</label>
+						<small class="d-block mb-2 text-muted">Enter multiple values to be used as options,
+							using commas to separate each one</small>
+						<textarea type="text" class="form-control" name="values" [(ngModel)]="customField.values"
+							placeholder="eg: item1, item2, item3" autocomplete="off"></textarea>
+					</div>
+
+
+					<div class="mb-2">
+						<label class="cursor-pointer">
+							<input type="checkbox" name="required" class="form-check-inline"
+								[(ngModel)]="customField.required" />
+							<span class="fw-normal">Allow the field to be optional.</span>
+						</label>
+					</div>
+
+					<div class="mb-2">
+						<label class="cursor-pointer">
+							<input type="checkbox" name="unique" class="form-check-inline"
+								[(ngModel)]="customField.unique" />
+							<span class="fw-normal">The field should have unique values to avoid
+								duplicates during validation.</span>
+						</label>
+					</div>
+
+				</ng-container>
+
+				<div class="modal-footer border-top pt-3 pb-0 px-0"
+					[ngClass]="showCreateColumn ? 'justify-content-between' : 'justify-content-end'">
+
+					<div *ngIf="showCreateColumn" [@fadeIn]>
+						<label class="cursor-pointer">
+							<input type="checkbox" name="createAnother" class="form-check-inline"
+								[(ngModel)]="createAnother" />
+							<span class="fw-normal">Create another</span>
+						</label>
+					</div>
+
+					<div>
+						<button class="btn btn-cancel me-3" (click)="checkActionCreateTemp()"
+							[disabled]="performingAction">
+							{{showCreateColumn ? 'Back' : 'Cancel'}}
+						</button>
+
+						<button type="button" class="btn btn-submit" *ngIf="!showCreateColumn" [@fadeIn]
+							(click)="assetCategory?.id ? editAssetCategory() : createAssetCategory()"
+							[disabled]="performingAction || emailInvalid || !assetCategory.email || !assetCategory.name || !assetCategory.msisdn">
+							{{performingAction ? 'Submitting ...' : 'Submit'}}
+						</button>
+
+						<button class="btn btn-submit" (click)="addCustomField()" *ngIf="showCreateColumn" [@fadeIn]
+							[disabled]="!customField.label || checkIfExists() || (!customField.values && customField.formElement === 'Select')">
+							Add column
+						</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Activate / Deactivate / Delete AssetCategory Modal -->
+	<div class="modal fade" id="assetCategoryActionModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="exampleModalLabel">{{action | titlecase}} asset category </h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+						id="closeAssetCategoryActionModal"></button>
+				</div>
+				<div class="modal-body py-4">
+
+					<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
+						<strong>Failed to {{action | lowercase}} asset category! </strong> {{errorMessage}}.
+					</div>
+
+					You are about to <strong [ngClass]="action !== 'ACTIVATE' ? 'red-text' : 'green-text'">
+						{{action | lowercase}} </strong>
+					<strong>{{assetCategory?.name}}'s</strong>
+					account. Would you like to proceed?
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+
+					<button type="button" class="btn" [ngClass]="action !== 'ACTIVATE' ? 'btn-delete'  : 'btn-submit'"
+						(click)="action === 'DELETE' ? deleteAssetCategory() : editAssetCategory()"
+						[disabled]="performingAction">{{action |
+						titlecase}}</button>
+
+				</div>
+			</div>
+		</div>
+	</div>

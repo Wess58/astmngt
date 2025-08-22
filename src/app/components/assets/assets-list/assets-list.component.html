@@ -1,0 +1,178 @@
+<div class="container-fluid home-page">
+	<div class="container">
+
+		<div class="card card-table">
+
+			<div class="table-header-section mb-1">
+				<div>
+					<h4 class="table-title"> Assets
+						<small class="table-subtitle" *ngIf="totalLength">({{totalLength}} items)</small>
+					</h4>
+				</div>
+				<div>
+					<button class="btn btn-create me-3" data-bs-toggle="modal" data-bs-target="#createAssetModal"
+						(click)="resetAsset()">
+						<span><i class="fa-solid fa-plus"></i></span>&nbsp; Create asset
+					</button>
+					<button class="btn btn-refresh" title="Refresh assets" [disabled]="loadingAssets"
+						(click)="getAssets(page)">
+						<span><i class="fa-solid fa-sync"></i></span>&nbsp; Refresh
+					</button>
+				</div>
+			</div>
+
+			<span class="filter-text">Filtering options</span>
+			<div class="filter-wrapper">
+				<!-- <div class="wrap ms-0">
+					<div class="uneditable-input" (click)="openInput('daterangeInput')">
+						<span> {{daterange.start | date : 'MMM d, y'}} <small>&nbsp;to&nbsp;</small> {{daterange.end |
+							date
+							: 'MMM d, y'}} </span>
+						<div class="inputsearch">
+							<input class="form-control" type="text" name="daterangeInput" id="daterangeInput"
+								daterangepicker [options]="options" (selected)="selectedDate($event, daterange)" />
+						</div>
+					</div>
+				</div> -->
+
+				<div class="wrap">
+					<select class="form-control" name="status" [(ngModel)]="filters.status" (change)="getAssets(1)">
+						<option value="ALL">All statuses</option>
+						<option value="READ">Read</option>
+						<option value="PENDING">Pending</option>
+						<option value="FAILED">Failed</option>
+						<option value="INVALID">Invalid</option>
+					</select>
+				</div>
+
+				<div class="wrap">
+					<input type="text" class="form-control" placeholder="name" name="name" [(ngModel)]="filters.name"
+						(keyup.enter)="getAssets(1)" />
+				</div>
+
+
+				<div class="wrap">
+					<button class="btn btn-refresh" title="Search assets" [disabled]="loadingAssets"
+						(click)="getAssets(1)">
+						<span><i class="fa-solid fa-search"></i></span>&nbsp; Search
+					</button>
+				</div>
+
+				<div class="wrap">
+					<button class="btn btn-clear-filters" [disabled]="loadingAssets" (click)="resetFilters()">
+						clear filters
+					</button>
+				</div>
+			</div>
+
+			<div class="donut-container" *ngIf="loadingAssets" [@fadeIn]>
+				<div class="donut-wrapper">
+					<div class="donut multi"></div>
+				</div>
+			</div>
+
+			<!-- <small class="d-block text-muted ps-2 mb-2 border-bottom pb-1" *ngIf="assets.length && !loadingAssets"
+				[@fadeIn]>Click on the <strong>asset name</strong>
+				to view account records from that asset.</small> -->
+
+			<table class="table" *ngIf="assets.length && !loadingAssets" [@fadeIn]>
+				<thead>
+					<tr>
+						<th scope="col" width="20%">Name</th>
+						<th scope="col">Type</th>
+						<th scope="col">Status</th>
+						<!-- <th scope="col" width="25%">Status reason</th> -->
+						<th scope="col" class="text-center" width="200px">
+							<!-- *hasOperation="['viewFile']" -->
+							Actions
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						*ngFor="let asset of assets | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalLength}; index as i">
+						<td>
+							<span class="redirect-link" [routerLink]="['/asset-detail', asset.id]">
+								{{asset.name}}
+							</span>
+						</td>
+						<td>
+							<span class="badge" [ngClass]="{
+									'badge-warning': asset.status === 'INVALID',
+									'badge-primary': asset.status === 'NEW',
+									'badge-success': asset.status === 'READ',
+									'badge-danger':  asset.status === 'FAILED'
+								}">{{ asset.status }}</span>
+						</td>
+						<td class="text-center" >
+							<!-- *hasOperation="['viewFile']" -->
+							<div class="dropdown">
+								<button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
+									data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									Actions
+								</button>
+								<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+									<a class="dropdown-item" [routerLink]="['/asset-detail', asset.id]">
+										View record
+									</a>
+
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+			<div class="pagination-container" align="center" class="mt-4"
+				*ngIf="totalLength > itemsPerPage && assets?.length && !loadingAssets" [@fadeIn]>
+				<pagination-controls (pageChange)="getAssets((page = $event))" [maxSize]="7" previousLabel=""
+					nextLabel=""></pagination-controls>
+			</div>
+
+			<div class="text-center my-5" *ngIf="!assets.length && !loadingAssets">
+				<span class="text-muted">No assets found</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<!-- Create / Edit User Modal -->
+<div class="modal fade" id="createAssetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">{{asset?.id ? 'Edit' : 'Create'}} asset </h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeEditModal"></button>
+			</div>
+			<div class="modal-body px-4">
+
+				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
+					<strong>Failed to {{(asset?.id ? 'edit' : 'create')}} asset! </strong> {{errorMessage}}.
+				</div>
+
+				<form class="row">
+
+					<div class="form-group col-md-6">
+						<label for="">Name</label>
+						<input type="text" class="form-control" name="name" [(ngModel)]="asset.name"
+							placeholder="Enter name" autocomplete="off">
+					</div>
+
+				</form>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-submit" (click)="asset?.id ? editAsset() : createAsset()"
+					[disabled]="performingAction || !asset.name">
+					{{performingAction ? 'Submitting ...' : 'Submit'}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

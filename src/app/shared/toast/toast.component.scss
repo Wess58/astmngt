@@ -1,0 +1,12 @@
+.custom-toast {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  min-width: 300px;
+  z-index: 2000 !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+  box-shadow: 5px 5px 10px 0 #0002;
+  font-size: 0.9rem;
+//   mask: linear-gradient(to right, red, #000 90%);
+}

@@ -1,0 +1,296 @@
+<div class="container-fluid home-page locations">
+	<div class="container">
+
+		<div class="card card-table">
+
+			<div class="table-header-section">
+				<div>
+					<h4 class="table-title"> Locations
+						<small class="table-subtitle" *ngIf="!loadingLocations && totalLength"
+							[@fadeIn]>({{totalLength}}
+							items)</small>
+					</h4>
+
+				</div>
+				<div>
+					<!-- <button class="btn btn-download me-3" title="Redirects to Download File Metadata in Excel"
+						(click)="createBatchTask()" [disabled]="prepareBatch">
+						<span class="m-0"><i class="fa-solid fa-file-arrow-down"></i></span>
+					</button> -->
+					<button class="btn btn-create me-3" data-bs-toggle="modal" data-bs-target="#createLocationModal"
+						(click)="resetLocation()">
+						<span><i class="fa-solid fa-plus"></i></span>&nbsp; Create location
+					</button>
+					<button class="btn btn-refresh" title="Refresh locations" (click)="getLocations(page)">
+						<span><i class="fa-solid fa-sync"></i></span>&nbsp; Refresh
+					</button>
+				</div>
+			</div>
+
+
+			<span class="filter-text">Filtering options</span>
+			<div class="filter-wrapper">
+
+				<div class="wrap ms-0">
+					<select class="form-control" name="status" [(ngModel)]="filters.type" (change)="getLocations(1)">
+						<option value="">All types</option>
+						<option *ngFor="let type of types;index as i" [value]="type">{{type}} </option>
+					</select>
+				</div>
+
+				<div class="wrap ms-0">
+					<select class="form-control" name="status" [(ngModel)]="filters.status" (change)="getLocations(1)">
+						<option value="">All statuses</option>
+						<option *ngFor="let status of statuses;index as i" [value]="status">{{status}} </option>
+					</select>
+				</div>
+
+				<div class="wrap">
+					<input type="text" class="form-control" placeholder="name" name="name" [(ngModel)]="filters.name"
+						(keyup.enter)="getLocations(1)" />
+				</div>
+
+				<div class="wrap">
+					<input type="text" class="form-control" placeholder="address" name="address"
+						[(ngModel)]="filters.address" (keyup.enter)="getLocations(1)" />
+				</div>
+
+				<div class="wrap">
+					<button class="btn btn-refresh" title="Search locations" [disabled]="loadingLocations"
+						(click)="getLocations(1)">
+						<span><i class="fa-solid fa-search"></i></span>&nbsp; Search
+					</button>
+				</div>
+
+				<div class="wrap">
+					<button class="btn btn-clear-filters" [disabled]="loadingLocations" (click)="resetFilters()">
+						clear filters
+					</button>
+				</div>
+			</div>
+
+			<div class="donut-container" *ngIf="loadingLocations" [@fadeIn]>
+				<div class="donut-wrapper">
+					<div class="donut multi"></div>
+				</div>
+			</div>
+
+			<table class="table" *ngIf="locations.length && !loadingLocations" [@fadeIn]>
+				<thead>
+					<tr>
+						<th scope="col">Name</th>
+						<th scope="col">Address</th>
+						<th scope="col">Coordinates</th>
+						<th scope="col">Type</th>
+						<th scope="col">Contact details</th>
+						<th scope="col">Status</th>
+						<th scope="col">Created on</th>
+						<th scope="col" class="text-center" width="100px">
+							Actions
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						*ngFor="let location of locations | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalLength}; index as i">
+						<td> {{ location.name }} </td>
+						<td> {{ location.address }} </td>
+						<td> {{ location.coordinates }} </td>
+						<td> <strong> {{ location.type }} </strong> </td>
+						<td>
+							<span class="d-block">{{ location.msisdn ?? '—' }}</span>
+							<span class="d-block text-muted">{{ location.email ?? '—' }}</span>
+						</td>
+						<td>
+							<span class="badge" [ngClass]="{
+								'badge-success':location?.status === 'ACTIVE',
+								'badge-danger':location?.status === 'INACTIVE',
+								'badge-primary':location?.status === 'NEW'
+							 }">{{
+								location?.status }}</span>
+						</td>
+
+						<td>
+							{{(location.createdOn | date : 'MMM d y , HH:mm') ?? '—'}}
+						</td>
+						<td class="text-center">
+							<div class="dropdown">
+								<!-- *jhiHasAnyAuthority="['MAKER', 'DFS_CUSTOMER_PROFILE', 'RF_ADMIN']" -->
+								<button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
+									data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<!-- [ngClass]="{'not-allowed':location?.status !== 'ACTIVE'}" -->
+									Actions
+								</button>
+								<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+									<a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#createLocationModal" (click)="selectLocation(location,'EDIT')">
+										Edit
+									</a>
+									<!-- <a class="dropdown-item" data-bs-toggle="modal"
+											data-bs-target="#locationActionModal"
+											(click)="selectLocation(location,'ACTIVATE')"
+											[hidden]="location?.status === 'ACTIVE'">
+											Activate
+										</a>
+										<a class="dropdown-item" data-bs-toggle="modal"
+											data-bs-target="#locationActionModal"
+											(click)="selectLocation(location,'DEACTIVATE')"
+											[hidden]="location?.status !== 'ACTIVE'">
+											Deactivate
+										</a> -->
+									<a class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#locationActionModal"
+										(click)="selectLocation(location,'DELETE')">
+										Delete
+									</a>
+
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="pagination-container" align="center" class="mt-4"
+				*ngIf="totalLength > itemsPerPage && locations?.length && !loadingLocations" [@fadeIn]>
+				<pagination-controls (pageChange)="getLocations((page = $event))" [maxSize]="7" previousLabel=""
+					nextLabel=""></pagination-controls>
+			</div>
+
+			<div class="text-center my-5" *ngIf="!locations.length && !loadingLocations">
+				<span class="text-muted">No locations found</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<!-- Create / Edit Location Modal -->
+<div class="modal fade" id="createLocationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">{{location?.id ? 'Edit' : 'Create'}} location </h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeEditModal"></button>
+			</div>
+			<div class="modal-body px-4">
+
+
+				<!-- <small class="request-desc d-flex">
+					<strong class="red-text d-block me-2">*</strong>
+					<span>
+						This operation is treated as <strong>a request</strong>.
+						This means it will be <strong>reviewed and processed</strong> after submission.
+					</span>
+				</small> -->
+
+				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
+					<strong>Failed to {{(location?.id ? 'edit' : 'create')}} location! </strong> {{errorMessage}}.
+				</div>
+
+				<form class="row">
+
+
+					<div class="form-group col-md-6">
+						<label for="">Name <sup class="red-text">*</sup></label>
+						<input type="text" class="form-control" name="name" [(ngModel)]="location.name"
+							placeholder="Enter name" autocomplete="off">
+					</div>
+
+
+					<div class="form-group col-md-6">
+						<label for="">Address <sup class="red-text">*</sup></label>
+						<input type="text" class="form-control" name="address" [(ngModel)]="location.address"
+							placeholder="Enter address" autocomplete="off">
+					</div>
+
+					<div class="form-group col-md-6">
+						<label for="">Coordinates <sup class="red-text">*</sup></label>
+						<input type="text" class="form-control" name="coordinates" [(ngModel)]="location.coordinates"
+							placeholder="Enter coordinates" autocomplete="off">
+					</div>
+
+					<div class="form-group col-md-6">
+						<label for="">Email
+							<small class="red-text fw-normal fst-italic ms-2" *ngIf="emailInvalid" [@fadeIn]>
+								Email is invalid</small>
+						</label>
+						<div class="position-relative">
+							<input type="text" class="form-control" name="email" [(ngModel)]="location.email"
+								(ngModelChange)="emailInvalid = false" (ngModelDebounceChange)="validateEmail()"
+								[ngModelOptions]="{standalone: true}" placeholder="Enter email locationname"
+								autocomplete="off">
+						</div>
+					</div>
+
+					<div class="form-group col-md-6">
+						<label for="">Mobile number </label>
+						<!-- <small class="label-desc">Required for login via OTP</small> -->
+						<input type="text" class="form-control" placeholder="Enter mobile number" name="msisdn"
+							[(ngModel)]="location.msisdn" pattern="[0-9]*" inputmode="numeric" maxlength="12"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0/,254).replace(/^7/,2547).replace(/(\..*)\./g, '$1');" />
+					</div>
+
+					<div class="form-group col-md-6">
+						<label>Type</label>
+						<select class="form-control" name="type" [(ngModel)]="location.type" required="required">
+							<option *ngFor="let type of types;index as i" [value]="type">
+								{{type}} </option>
+						</select>
+					</div>
+
+
+
+				</form>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-submit" (click)="location?.id ? editLocation() : createLocation()"
+					[disabled]="performingAction || emailInvalid  || !location.name || !location.address || !location.coordinates">
+					{{performingAction ? 'Submitting ...' : 'Submit'}}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Activate / Deactivate / Delete Location Modal -->
+<div class="modal fade" id="locationActionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">{{action | titlecase}} location </h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeLocationActionModal"></button>
+			</div>
+			<div class="modal-body py-4">
+
+				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
+					<strong>Failed to {{action | lowercase}} location! </strong> {{errorMessage}}.
+				</div>
+
+				You are about to <strong [ngClass]="action !== 'ACTIVATE' ? 'red-text' : 'green-text'">
+					{{action | lowercase}} </strong>
+				<strong>{{location?.name}}'s</strong>
+				account. Would you like to proceed?
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+
+				<button type="button" class="btn" [ngClass]="action !== 'ACTIVATE' ? 'btn-delete'  : 'btn-submit'"
+					(click)="action === 'DELETE' ? deleteLocation() : editLocation()"
+					[disabled]="performingAction">{{action |
+					titlecase}}</button>
+
+			</div>
+		</div>
+	</div>
+</div>

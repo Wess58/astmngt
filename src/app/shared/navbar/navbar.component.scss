@@ -1,0 +1,99 @@
+.navbar {
+  padding: 0 20px;
+  height: 65px;
+  background-color: #fff;
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.02);
+
+  .nav-logo {
+    height: 45px;
+  }
+  .platform-name {
+    color: var(--app-dark-blue);
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: inline-block;
+    margin-left: 10px;
+  }
+
+  .navbar-nav {
+    align-items: center;
+
+    .nav-item {
+      margin: 0 15px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid #fff;
+      transition: all 0.2s;
+
+      &:hover {
+        border-bottom: 2px solid #80868b;
+      }
+    }
+  }
+
+  .active-nav-item {
+    font-weight: 500;
+    border-bottom: 2px solid var(--app-dark-blue) !important;
+
+    .nav-link {
+      color: var(--app-dark-blue) !important;
+    }
+  }
+
+  .profile-nav-link {
+    border: 1px solid #e1e1e1;
+    border-radius: 20px;
+    padding: 7px 20px;
+    font-weight: 600;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+
+    &::after {
+      content: none !important;
+    }
+
+    .role {
+      font-size: 0.7rem;
+      color: var(--app-dark-blue);
+      // font-weight: normal;
+    }
+
+    .fa-solid {
+      position: relative;
+      top: -12px;
+      font-size: 1.1rem;
+    }
+  }
+
+  .profile-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--app-light-blue);
+    color: #3c4043;
+    font-weight: 600;
+    font-size: 1.4rem !important;
+    text-transform: uppercase;
+  }
+
+  .dropdown-menu {
+    .dropdown-item {
+      span {
+        width: 20px;
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1420px) {
+  .navbar {
+    zoom: 85%;
+  }
+}

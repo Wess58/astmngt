@@ -1,0 +1,26 @@
+<div class="custom-toast d-flex flex-column-reverse mb-3 pointer-events-none" *ngIf="toasts?.length" [@fadeInRight]>
+  <div *ngFor="let toast of toasts; trackBy: trackById" [ngClass]="{
+        'badge-success': toast.type === 'success',
+        'badge-danger':   toast.type === 'error',
+        'badge-primary': toast.type === 'info',
+        'badge-warning': toast.type === 'warning'
+      }" class="toast-item pointer-events-auto d-flex align-items-center justify-content-between p-2 border">
+    <!-- Icon -->
+    <!-- <i [ngClass]="{
+          'bi-check-circle-fill': toast.type==='success',
+          'bi-exclamation-octagon-fill': toast.type==='error',
+          'bi-info-circle-fill': toast.type==='info',
+          'bi-exclamation-triangle-fill': toast.type==='warning'
+        }" class="text-lg flex-shrink-0"></i> -->
+
+    <!-- Message -->
+    <div class="mx-2 text-sm fw-medium">
+      {{ toast.message }}
+    </div>
+
+    <!-- Close -->
+    <button (click)="dismiss(toast.id)" class="btn text-muted me-2" aria-label="Dismiss">
+      <i class="fa-solid fa-times"></i>
+    </button>
+  </div>
+</div>
