@@ -104,7 +104,7 @@
 									'badge-danger':  asset.status === 'FAILED'
 								}">{{ asset.status }}</span>
 						</td>
-						<td class="text-center" >
+						<td class="text-center">
 							<!-- *hasOperation="['viewFile']" -->
 							<div class="dropdown">
 								<button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -142,7 +142,7 @@
 
 <!-- Create / Edit User Modal -->
 <div class="modal fade" id="createAssetModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+	<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="exampleModalLabel">{{asset?.id ? 'Edit' : 'Create'}} asset </h4>
@@ -151,16 +151,101 @@
 			</div>
 			<div class="modal-body px-4">
 
+				<div class="wizard-steps">
+					<span class="steps-count d-block">Step {{step}} of 3 </span>
+					<span class="step-title d-block"> {{wizardSteps[step - 1].title}} </span>
+					<span class="step-desc d-block"> {{wizardSteps[step - 1].desc}} </span>
+				</div>
+
 				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
 					<strong>Failed to {{(asset?.id ? 'edit' : 'create')}} asset! </strong> {{errorMessage}}.
 				</div>
 
 				<form class="row">
 
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-4">
 						<label for="">Name</label>
 						<input type="text" class="form-control" name="name" [(ngModel)]="asset.name"
 							placeholder="Enter name" autocomplete="off">
+					</div>
+
+					<div class="form-group col-md-4">
+						<label for="">Category</label>
+						<select class="form-control" name="category" [(ngModel)]="asset.category.id">
+							<option *ngFor="let category of categories;index as i" [value]="category.id">
+								{{category.name}}
+							</option>
+						</select>
+					</div>
+
+					<div class="form-group col-md-4">
+						<label for="">Model</label>
+						<input type="text" class="form-control" name="model" [(ngModel)]="asset.model"
+							placeholder="Enter model" autocomplete="off">
+					</div>
+
+
+					<div class="form-group col-md-4">
+						<label for="">Model number</label>
+						<input type="text" class="form-control" name="modelNumber" [(ngModel)]="asset.modelNumber"
+							placeholder="Enter model number" autocomplete="off">
+					</div>
+
+
+					<div class="form-group col-md-4">
+						<label for="">Purchase date</label>
+						<input type="date" class="form-control" name="purchaseDate" [(ngModel)]="asset.purchaseDate"
+							autocomplete="off">
+					</div>
+
+					<div class="form-group col-md-4">
+						<label for="">Purchase value</label>
+						<input type="text" class="form-control" name="purchaseCost" [(ngModel)]="asset.purchaseCost"
+							placeholder="Enter purchase cost" autocomplete="off" pattern="[0-9]*" inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+					</div>
+
+					<div class="form-group col-md-4">
+						<label for="">Current value</label>
+						<input type="text" class="form-control" name="currentValue" [(ngModel)]="asset.currentValue"
+							placeholder="Enter current value" autocomplete="off" pattern="[0-9]*" inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+					</div>
+
+					<div class="form-group col-md-4">
+						<label for="">Depreciation rate</label>
+						<input type="text" class="form-control" name="depreciationRate" [(ngModel)]="asset.depreciationRate"
+							placeholder="Enter rate in percentage" autocomplete="off" pattern="[0-9]*" inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+					</div>
+
+					<div class="form-group col-md-4">
+						<label for="">Full depreciation date</label>
+						<input type="date" class="form-control" name="purchaseDate" [(ngModel)]="asset.purchaseDate" autocomplete="off">
+					</div>
+
+					<div class="form-group col-md-4">
+						<label>Assigned location</label>
+						<select class="form-control" name="location" [(ngModel)]="asset.location.id" required="required">
+							<option *ngFor="let location of locations;index as i" [value]="location.id">{{location.name}} </option>
+						</select>
+					</div>
+					
+					<div class="form-group col-md-4">
+						<label>Assigned department</label>
+						<select class="form-control" name="department" [(ngModel)]="asset.department.id" required="required">
+							<option *ngFor="let department of departments;index as i" [value]="department.id">{{department.name}} </option>
+						</select>
+					</div>
+
+					<div class="form-group col-md-4">
+						<label for="">Current holder / assignee </label>
+						<select class="form-control" name="holder" [(ngModel)]="filters.holder">
+							<option value="">Select person to assign</option>
+							<!-- <option *ngFor="let category of categories;index as i" [value]="category.id">
+								{{category.name}}
+							</option> -->
+						</select>
 					</div>
 
 				</form>

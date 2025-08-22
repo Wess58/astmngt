@@ -267,13 +267,13 @@ textarea:hover {
 }
 
 .btn-back {
-  background-color: #e1e1e1!important;
-  color: #212121!important;
+  background-color: #e1e1e1 !important;
+  color: #212121 !important;
 }
 
 .btn-download {
   background-color: var(--app-light-blue) !important;
-  color: #fff!important;
+  color: #fff !important;
 }
 
 .home-page {
@@ -450,6 +450,29 @@ textarea:hover {
         }
       }
     }
+  }
+}
+
+//  NEW MINIMALIST WIZARD STEPS UX STYLING  */
+//  ********************************************** */
+.wizard-steps {
+  margin-bottom: 25px;
+
+  .steps-count {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: var(--app-dark-blue);
+  }
+
+  .step-title {
+    font-size: 0.95rem;
+    color: #3c4043;
+    font-weight: 600;
+  }
+  .step-desc {
+    color: #5f6368;
+    font-size: 0.9rem;
   }
 }
 

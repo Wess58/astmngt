@@ -6,6 +6,8 @@ import moment from 'moment';
 import { AssetsService } from '../../../services/assets.service';
 import { ToastService } from '../../../services/toast.service';
 import { fadeIn } from '../../../animations';
+import { DepartmentsService } from '../../../services/departments.service';
+import { LocationService } from '../../../services/location.service';
 
 
 @Component({
@@ -20,10 +22,15 @@ export class AssetsListComponent implements OnInit {
   filters: any = {
     status: 'ALL'
   };
-  asset: any;
 
+  asset: any = {
+    category: { id: 0 },
+    location: { id: 0 },
+    department: { id: 0 }
+  };
   assets: any = [];
   loadingAssets = false;
+
   page: number = 1;
   itemsPerPage = 20;
   totalLength: any;
@@ -37,12 +44,33 @@ export class AssetsListComponent implements OnInit {
   actionFail = false;
   errorMessage = '';
 
+  departments: any[] = [];
+  locations: any[] = [];
+  categories: any = [];
+
+  wizardSteps = [
+    {
+      title: 'Basic information',
+      desc:'Enter the general information about the asset.'
+    },
+    {
+      title: 'Value & Pricing details',
+      desc: 'Specify the asset’s recorded value.'
+    },
+    {
+      title: 'Holder / Assignee details',
+      desc: 'Provide information about the location, department & person that owns the asset.'
+    }
+  ]
+  step = 1;
 
   constructor(
     public router: Router,
     private activatedRoute: ActivatedRoute,
     private assetsService: AssetsService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private departmentsService: DepartmentsService,
+    private locationService: LocationService
   ) { }
 
   ngOnInit(): void {
@@ -91,9 +119,11 @@ export class AssetsListComponent implements OnInit {
     this.filters.status = this.activatedRoute.snapshot.queryParams['status'] || '';
     this.filters.name = this.activatedRoute.snapshot.queryParams['name'] || '';
 
-
     this.getAssets(this.page);
 
+    this.getLocations();
+    this.getDepartments();
+    this.getAssetCategories();
   }
 
 
@@ -136,6 +166,55 @@ export class AssetsListComponent implements OnInit {
         error: (error) => {
           console.log(error);
           this.loadingAssets = false;
+        }
+      }
+    )
+  }
+
+
+  getDepartments(): void {
+    const options = {
+      page: 0,
+      size: 10000,
+      sort: 'id,desc'
+    }
+
+    this.departmentsService.getAll(options).subscribe(
+      {
+        next: (res) => {
+          this.departments = res.body;
+        }
+      }
+    )
+  }
+
+  getLocations(): void {
+    const options = {
+      page: 0,
+      size: 10000,
+      sort: 'id,desc'
+    }
+
+    this.locationService.getAll(options).subscribe(
+      {
+        next: (res) => {
+          this.locations = res.body;
+        }
+      }
+    )
+  }
+
+  getAssetCategories(): void {
+    const options = {
+      page: 0,
+      size: 10000,
+      sort: 'id,desc'
+    }
+
+    this.assetsService.getAllAssetCategories(options).subscribe(
+      {
+        next: (res) => {
+          this.categories = res.body;
         }
       }
     )
@@ -221,7 +300,15 @@ export class AssetsListComponent implements OnInit {
 
   resetAsset(): void {
     this.asset = {
-      // type: this.types[0]
+      location: {
+        id: this.locations[0]?.id || 0
+      },
+      department: {
+        id: this.departments[0]?.id || 0
+      },
+      category: {
+        id: this.categories[0]?.id || 0
+      }
     };
 
     this.performingAction = false;
