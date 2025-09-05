@@ -53,13 +53,13 @@ export class LoginComponent implements OnInit {
     this.authenticationError = false;
     this.logingIn = true;
 
-    const data = {
-      username: this.login.username,
-      password: this.login.password
-    }
+    // const data = {
+    //   username: this.login.username,
+    //   password: this.login.password
+    // }
 
+    this.router.navigateByUrl('/assets')
 
-    this.router.navigate(['']);
 
     // this.apiService.requestOTP(data).subscribe(
     //   {
