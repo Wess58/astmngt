@@ -58,6 +58,9 @@ export class LoginComponent implements OnInit {
       password: this.login.password
     }
 
+
+    this.router.navigate(['']);
+
     // this.apiService.requestOTP(data).subscribe(
     //   {
     //     next: (res) => {
