@@ -8,7 +8,7 @@ import { ToastService } from '../../../services/toast.service';
 import { fadeIn } from '../../../animations';
 import { DepartmentsService } from '../../../services/departments.service';
 import { LocationService } from '../../../services/location.service';
-
+import { UsersService } from '../../../services/users.service';
 
 @Component({
   selector: 'app-assets-list',
@@ -46,12 +46,19 @@ export class AssetsListComponent implements OnInit {
 
   departments: any[] = [];
   locations: any[] = [];
-  categories: any = [];
+  categories: any[] = [];
+  users: any[] = [];
+  openHolder = false;
+  userSearchTerm = '';
+
+  assetImages: any = [];
+  action: string = '';
+
 
   wizardSteps = [
     {
       title: 'Basic information',
-      desc:'Enter the general information about the asset.'
+      desc: 'Enter the general information about the asset.'
     },
     {
       title: 'Value & Pricing details',
@@ -60,6 +67,10 @@ export class AssetsListComponent implements OnInit {
     {
       title: 'Holder / Assignee details',
       desc: 'Provide information about the location, department & person that owns the asset.'
+    },
+    {
+      title: 'Verify details',
+      desc: 'Take a moment to review the details so we can process it correctly'
     }
   ]
   step = 1;
@@ -70,12 +81,15 @@ export class AssetsListComponent implements OnInit {
     private assetsService: AssetsService,
     private toastService: ToastService,
     private departmentsService: DepartmentsService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private usersService: UsersService
   ) { }
 
   ngOnInit(): void {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
+    if (localStorage.getItem('asset')) this.asset = JSON.parse(localStorage.getItem('asset') || '{}');
+  
     this.setFilterParams();
   }
 
@@ -124,6 +138,7 @@ export class AssetsListComponent implements OnInit {
     this.getLocations();
     this.getDepartments();
     this.getAssetCategories();
+    this.getUsers();
   }
 
 
@@ -175,7 +190,7 @@ export class AssetsListComponent implements OnInit {
   getDepartments(): void {
     const options = {
       page: 0,
-      size: 10000,
+      size: 100000,
       sort: 'id,desc'
     }
 
@@ -183,6 +198,7 @@ export class AssetsListComponent implements OnInit {
       {
         next: (res) => {
           this.departments = res.body;
+          this.asset.department.id = this.departments[0]?.id ?? 0;
         }
       }
     )
@@ -191,7 +207,7 @@ export class AssetsListComponent implements OnInit {
   getLocations(): void {
     const options = {
       page: 0,
-      size: 10000,
+      size: 100000,
       sort: 'id,desc'
     }
 
@@ -199,6 +215,7 @@ export class AssetsListComponent implements OnInit {
       {
         next: (res) => {
           this.locations = res.body;
+          this.asset.location.id = this.locations[0].id ?? 0;
         }
       }
     )
@@ -207,7 +224,7 @@ export class AssetsListComponent implements OnInit {
   getAssetCategories(): void {
     const options = {
       page: 0,
-      size: 10000,
+      size: 100000,
       sort: 'id,desc'
     }
 
@@ -215,15 +232,56 @@ export class AssetsListComponent implements OnInit {
       {
         next: (res) => {
           this.categories = res.body;
+          this.asset.category.id = this.categories[0].id ?? 0;
         }
       }
     )
+  }
+
+  getUsers(): void {
+    const options = {
+      page: 0,
+      size: 1000000,
+      sort: 'id,desc'
+    }
+
+    this.usersService.getUsers(options).subscribe(
+      {
+        next: (res) => {
+          this.users = res.body;
+        }
+      }
+    )
+  }
+
+  filterUsers(): any {
+    return this.users.filter((user: any) => !this.userSearchTerm || user.name.toLowerCase().includes(this.userSearchTerm.toLowerCase()))
+  }
+
+  selectHolder(holder: any): void {
+    this.asset.holder.id = holder.id;
+    this.userSearchTerm = holder.name;
+    this.openHolder = false;
+  }
+
+  navigateSteps(action: string = 'back'): void {
+    action === 'next' ? this.step++ : this.step--;
+    localStorage.setItem('asset', JSON.stringify(this.asset));
+  }
+
+  checkForEmptyFields(): boolean {
+    if (this.step === 1) return !this.asset.name || !this.asset.model || !this.asset.modelNumber || !this.assetImages.length;
+    if (this.step === 2) return !this.asset.purchaseDate || !this.asset.purchaseCost || !this.asset.currentValue;
+    if (this.step === 3) return !this.asset.holder;
+    return false;
   }
 
   createAsset(): void {
 
     this.performingAction = true;
     this.actionFail = false;
+
+    this.asset.identifier = this.asset.modelNumber ?? '';
 
     this.assetsService.create(this.asset).subscribe(
       {
@@ -252,6 +310,9 @@ export class AssetsListComponent implements OnInit {
   editAsset(): void {
     this.performingAction = true;
     this.actionFail = false;
+
+    this.asset.identifier = this.asset.modelNumber ?? '';
+
 
     this.assetsService.update(this.asset).subscribe(
       {
@@ -298,6 +359,35 @@ export class AssetsListComponent implements OnInit {
   }
 
 
+  updateImages(assetImages: any): void {
+    this.assetImages = assetImages;
+  }
+
+  setCoverImage(uuid: any): void {
+    this.asset.coverImage = uuid;
+  }
+
+
+  selectAsset(asset: any, action: string): void {
+
+    this.action = action;
+    this.asset = Object.assign({}, asset);
+
+    this.assetImages = [];
+    this.assetImages = JSON.parse(JSON.stringify(
+      this.asset.media.map((str: string) => (
+        {
+          // previewUrl: window.location.origin + '/api/media/file/' + str,
+          uuid: str,
+          name: str,
+          uploaded: true,
+          compressed: true
+        }
+      ))
+    ));
+  }
+
+
   resetAsset(): void {
     this.asset = {
       location: {
@@ -308,11 +398,15 @@ export class AssetsListComponent implements OnInit {
       },
       category: {
         id: this.categories[0]?.id || 0
+      },
+      holder: {
+        id: null
       }
     };
 
     this.performingAction = false;
     this.actionFail = false;
+    this.assetImages = [];
     this.errorMessage = '';
   }
 

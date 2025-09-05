@@ -29,6 +29,15 @@ export const fadeIn = trigger('fadeIn', [
 	]),
 ]);
 
+
+export const fadeInResults = trigger('fadeInResults', [
+	transition(':enter', [
+		// :enter is alias to 'void => *'
+		style({ opacity: 0 }),
+		animate(250, style({ opacity: 1 })),
+	]),
+]);
+
 export const fadeInGrow = trigger('fadeInGrow', [
 	transition(':enter', [
 		query(

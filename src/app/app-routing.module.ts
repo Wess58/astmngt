@@ -6,6 +6,7 @@ import { DepartmentsComponent } from './components/departments/departments.compo
 import { CategoriesComponent } from './components/assets/categories/categories.component';
 import { UsersManagementComponent } from './components/users-management/users-management.component';
 import { RoleMatrixComponent } from './components/role-matrix/role-matrix.component';
+import { LoginComponent } from './auth/login/login.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,10 @@ const routes: Routes = [
   {
     path: 'role-matrix',
     component: RoleMatrixComponent
+  },
+  {
+    path:'login',
+    component: LoginComponent
   }
 ];
 

@@ -27,6 +27,15 @@ export class AssetsService {
     return this.httpClient.post<any>(environment.API_ENDPOINT + '/api/assets', data);
   }
 
+  uploadFile(formData: FormData): Observable<any> {
+
+    const req = new HttpRequest('POST', 'api/media/upload', formData, {
+      reportProgress: true,
+    });
+
+    return this.httpClient.request(req);
+  }
+
   update(data: any): Observable<any> {
     return this.httpClient.put<any>(environment.API_ENDPOINT + '/api/assets', data,
       { observe: 'response' });

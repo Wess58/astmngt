@@ -18,8 +18,8 @@ export class CategoriesComponent implements OnInit {
   loadingCategories = false;
   assetCategories: any = [];
   assetCategory: any = {
-    role: 'USER'
-  };
+    customFields: []
+  }
 
   customerFields: any = [];
   customField: any = {
@@ -31,7 +31,7 @@ export class CategoriesComponent implements OnInit {
   showCreateColumn: boolean = false;
   createAnother: boolean = false;
   columnTypes: string[] = ['Text', 'Number', 'Select'];
-
+  // TEXT,    CHECKBOX,    RADIO,    TEXTAREA, SELECT
 
   emailInvalid: boolean = false;
   filters: any = {
@@ -120,11 +120,18 @@ export class CategoriesComponent implements OnInit {
     this.performingAction = true;
     this.actionFail = false;
 
+    this.formatFieldsForCustomCategories();
+
     this.assetsService.createAssetCategory(this.assetCategory).subscribe(
       {
         next: (res) => {
 
           this.performingAction = false;
+          this.closeModal('closeEditModal');
+          this.getAssetCategories(this.page);
+
+          this.toastService.success('Asset category created successfully!');
+
           // this.setAssetCategoryPassword('closeEditModal', 'CREATE');
 
         },
@@ -144,6 +151,12 @@ export class CategoriesComponent implements OnInit {
     this.performingAction = true;
     this.actionFail = false;
 
+    // const template = JSON.parse(JSON.stringify(this.template));
+
+    // template.newColumns = template.columns.filter((col: any) => col.checked && !col.linkId).map((col: any) => ({ columnId: col.id, nullable: col.nullable, unique: col.unique }))
+    // template.removedColumns = template.columns.filter((col: any) => !col.checked && col.linkId).map((col: any) => (col.id));
+    // template.columns = template.columns.filter((col: any) => col.checked && col.linkId).map(({ linkId, ...col }: any) => col);
+
     this.assetsService.updateAssetCategory(this.assetCategory).subscribe(
       {
         next: (res) => {
@@ -151,7 +164,7 @@ export class CategoriesComponent implements OnInit {
           this.closeModal('closeEditModal');
           this.getAssetCategories(this.page);
 
-          this.toastService.success('AssetCategory updated successfully!');
+          this.toastService.success('Asset category updated successfully!');
         },
         error: (error) => {
           console.log(error);
@@ -162,6 +175,17 @@ export class CategoriesComponent implements OnInit {
         }
       }
     )
+  }
+
+  formatFieldsForCustomCategories(): any {
+    const customerFields: any[] = [...this.customerFields];
+
+    customerFields.forEach((field: any) => {
+      // field?.values?.length ? field.values = field.values.split(',').map((val: string) => val.trim()) : '';
+      field.formElement = field.formElement.toUpperCase();
+    });
+
+    this.assetCategory.customFields = [...customerFields];
   }
 
   deleteAssetCategory(): void {
@@ -175,7 +199,7 @@ export class CategoriesComponent implements OnInit {
           this.closeModal('closeAssetCategoryActionModal');
           this.getAssetCategories(this.page);
 
-          this.toastService.success('AssetCategory deleted successfully!');
+          this.toastService.success('Asset category deleted successfully!');
         },
         error: (error) => {
           console.log(error);
@@ -208,7 +232,7 @@ export class CategoriesComponent implements OnInit {
     this.showCreateColumn = this.createAnother;
   }
 
-  resetCustomeField():void{
+  resetCustomeField(): void {
     this.customField = {
       formElement: 'Text',
       required: true,
@@ -224,9 +248,14 @@ export class CategoriesComponent implements OnInit {
     this.customerFields.splice(index, 1);
   }
 
-  checkIfExists(): void {
+  checkIfLabelExists(): boolean {
     return this.customField?.name && this.customerFields.some((col: any) => col.name === this.customField?.name);
   }
+
+  checkIfCategoryExists(): boolean {
+    return this.assetCategory?.name && this.assetCategories.some((col: any) => col.name === this.assetCategory?.name);
+  }
+
 
   checkIfSelectValuesExist(): boolean {
     return this.customerFields.some((col: any) => col?.values?.length);
@@ -240,7 +269,7 @@ export class CategoriesComponent implements OnInit {
   }
 
 
-  customFieldInterval():void{
+  customFieldInterval(): void {
 
     // this.
 
@@ -265,27 +294,29 @@ export class CategoriesComponent implements OnInit {
     // this.column?.values?.length ? this.column.values = this.column.values.split(',').map((val: string) => val.trim()) : '';
     // this.column.templateId = this.template.id,
 
-      // this.assetsService.createTemplateColumn(this.column).subscribe(
-      //   {
-      //     next: (res) => {
-      //       // console.log(res);
-      //       this.toastService.success('Column created successfully!');
-      //       this.actionInProgress = false;
-      //       this.showCreateColumn = false;
+    // this.assetsService.createTemplateColumn(this.column).subscribe(
+    //   {
+    //     next: (res) => {
+    //       // console.log(res);
+    //       this.toastService.success('Column created successfully!');
+    //       this.actionInProgress = false;
+    //       this.showCreateColumn = false;
 
-      //     },
-      //     error: (error) => {
-      //       console.log(error);
-      //       this.actionInProgress = false;
-      //       this.actionFailed = true;
-      //     }
-      //   }
-      // )
+    //     },
+    //     error: (error) => {
+    //       console.log(error);
+    //       this.actionInProgress = false;
+    //       this.actionFailed = true;
+    //     }
+    //   }
+    // )
   }
 
 
   resetAssetCategory(): void {
-    this.assetCategory = { role: 'USER' };
+    this.assetCategory = { customFields: [] };
+    this.customerFields = [];
+    this.createAnother = false;
     this.performingAction = false;
     this.actionFail = false;
   }

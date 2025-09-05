@@ -67,9 +67,7 @@
 			<table class="table" *ngIf="assetCategories.length && !loadingCategories" [@fadeIn]>
 				<thead>
 					<tr>
-						<th scope="col">Name</th>
-						<th scope="col">Contact details</th>
-						<th scope="col">Location</th>
+						<th scope="col" width="45%">Name</th>
 						<th scope="col">Status</th>
 						<th scope="col">Created on</th>
 						<th scope="col" class="text-center" width="100px">
@@ -83,11 +81,6 @@
 						<td>
 							{{ category.name }}
 						</td>
-						<td>
-							<span class="d-block">{{ category.msisdn ?? '—' }}</span>
-							<span class="d-block text-muted">{{ category.email ?? '—' }}</span>
-						</td>
-						<td> {{ category?.location?.name }} </td>
 						<td>
 							<span class="badge" [ngClass]="{
 								'badge-success':category?.status === 'ACTIVE',
@@ -177,15 +170,19 @@
 				<form class="row" *ngIf="!showCreateColumn" [@fadeIn]>
 
 					<div class="form-group col-md-6">
-						<label for="">Name</label>
+						<label for="">Name <sup class="red-text">*</sup>
+							<small *ngIf="checkIfCategoryExists()" [@fadeIn] class="fw-normal red-text ms-3">category
+								already
+								exists</small>
+						</label>
 						<input type="text" class="form-control" name="name" [(ngModel)]="assetCategory.name"
 							placeholder="Enter name" autocomplete="off">
 					</div>
 
-					<div class="d-flex justify-content-between mt-2">
+					<div class="d-flex justify-content-between align-items-md-center mt-2 mb-4 border-top pt-3">
 						<div class="w-75">
 							<span class="d-block fw-bold text-muted">Define asset fields </span>
-							<small class="d-block mb-4 text-muted">These fields will guide how data is
+							<small class="d-block text-muted">These fields guide how data is
 								structured and validated for an asset.
 							</small>
 						</div>
@@ -214,7 +211,7 @@
 							<tbody>
 								<tr *ngFor="let column of customerFields;index as i"
 									class="hover:bg-gray-50 transition cursor-pointer border-b border-gray-100 last:border-none">
-									<td class="break-words">{{ column?.label }}
+									<td class="break-words">{{ column?.name }}
 									</td>
 
 									<td class="break-words">{{ column?.formElement}}
@@ -260,29 +257,41 @@
 
 					<div class="row">
 						<div class="form-group col-md-6">
-							<label for="name" class="block text-sm font-medium text-gray-700">Field name <span
-									*ngIf="checkIfExists()"
-									class="animate-fade-in font-normal text-sm text-red-500 ml-2">field already
-									exists</span></label>
-							<input type="text" class="form-control" name="label" [(ngModel)]="customField.label"
+							<label for="name">Field name <sup class="red-text">*</sup> <small
+									*ngIf="checkIfLabelExists()" [@fadeIn] class="fw-normal red-text ms-2">field already
+									exists</small></label>
+							<input type="text" class="form-control" name="label" [(ngModel)]="customField.name"
 								placeholder="eg: Model number, Chassis number" autocomplete="off" />
 						</div>
 
 						<div class="form-group col-md-6 px-3">
-							<label class="block text-sm font-medium text-gray-700">Field type</label>
+							<label for="formElement">Field type</label>
 							<select name="type" [(ngModel)]="customField.formElement" class="form-control">
 								<option *ngFor="let type of columnTypes" [value]="type">
 									{{ type === 'Select' ? type + ' (dropdown)' : type }}</option>
 							</select>
 						</div>
+
+
+						<div class="form-group col-md-12">
+							<label for="helpText" class="d-flex justify-content-between w-100">Field
+								description
+								<small class="d-inline-block fw-normal text-light-grey me-1">
+									{{customField?.helpText?.length ?? 0}} / 70 </small>
+							</label>
+							<input type="text" class="form-control" name="helpText" [(ngModel)]="customField.helpText"
+								placeholder="Write a short, clear description (optional)" autocomplete="off"
+								maxlength="70" />
+						</div>
 					</div>
 
 					<div class="form-group" *ngIf="customField.formElement === 'Select'" [@fadeIn]>
-						<label class="ms-0 mb-0" for="name">Select / Dropdown values</label>
+						<label class="ms-0 mb-0" for="values">Select / Dropdown values</label>
 						<small class="d-block mb-2 text-muted">Enter multiple values to be used as options,
 							using commas to separate each one</small>
-						<textarea type="text" class="form-control" name="values" [(ngModel)]="customField.values"
-							placeholder="eg: item1, item2, item3" autocomplete="off"></textarea>
+						<textarea type="text" class="form-control" name="values" rows="2"
+							[(ngModel)]="customField.values" placeholder="eg: item1, item2, item3"
+							autocomplete="off"></textarea>
 					</div>
 
 
@@ -290,7 +299,7 @@
 						<label class="cursor-pointer">
 							<input type="checkbox" name="required" class="form-check-inline"
 								[(ngModel)]="customField.required" />
-							<span class="fw-normal">Allow the field to be optional.</span>
+							<span class="fw-normal">Set field as required / mandatory.</span>
 						</label>
 					</div>
 
@@ -304,37 +313,36 @@
 					</div>
 
 				</ng-container>
+			</div>
 
-				<div class="modal-footer border-top pt-3 pb-0 px-0"
-					[ngClass]="showCreateColumn ? 'justify-content-between' : 'justify-content-end'">
+			<div class="modal-footer border-top pt-3"
+				[ngClass]="showCreateColumn ? 'justify-content-between' : 'justify-content-end'">
 
-					<div *ngIf="showCreateColumn" [@fadeIn]>
-						<label class="cursor-pointer">
-							<input type="checkbox" name="createAnother" class="form-check-inline"
-								[(ngModel)]="createAnother" />
-							<span class="fw-normal">Create another</span>
-						</label>
-					</div>
-
-					<div>
-						<button class="btn btn-cancel me-3" (click)="checkActionCreateTemp()"
-							[disabled]="performingAction">
-							{{showCreateColumn ? 'Back' : 'Cancel'}}
-						</button>
-
-						<button type="button" class="btn btn-submit" *ngIf="!showCreateColumn" [@fadeIn]
-							(click)="assetCategory?.id ? editAssetCategory() : createAssetCategory()"
-							[disabled]="performingAction || emailInvalid || !assetCategory.email || !assetCategory.name || !assetCategory.msisdn">
-							{{performingAction ? 'Submitting ...' : 'Submit'}}
-						</button>
-
-						<button class="btn btn-submit" (click)="addCustomField()" *ngIf="showCreateColumn" [@fadeIn]
-							[disabled]="!customField.label || checkIfExists() || (!customField.values && customField.formElement === 'Select')">
-							Add column
-						</button>
-					</div>
-
+				<div *ngIf="showCreateColumn" [@fadeIn]>
+					<label class="cursor-pointer">
+						<input type="checkbox" name="createAnother" class="form-check-inline"
+							[(ngModel)]="createAnother" />
+						<span class="fw-normal">Create another</span>
+					</label>
 				</div>
+
+				<div>
+					<button class="btn btn-cancel me-3" (click)="checkActionCreateTemp()" [disabled]="performingAction">
+						{{showCreateColumn ? 'Back' : 'Cancel'}}
+					</button>
+
+					<button type="button" class="btn btn-submit" *ngIf="!showCreateColumn" [@fadeIn]
+						(click)="assetCategory?.id ? editAssetCategory() : createAssetCategory()"
+						[disabled]="performingAction || !assetCategory.name ">
+						{{performingAction ? 'Submitting ...' : 'Submit'}}
+					</button>
+
+					<button class="btn btn-submit" (click)="addCustomField()" *ngIf="showCreateColumn" [@fadeIn]
+						[disabled]="!customField.name || checkIfLabelExists() || (!customField.values && customField.formElement === 'Select')">
+						Add column
+					</button>
+				</div>
+
 			</div>
 		</div>
 	</div>

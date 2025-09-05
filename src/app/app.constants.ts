@@ -15,27 +15,33 @@ export const ALL_OPERATIONS = [
 export const MENUS_WITH_PATHS = [
 	{
 		title: 'ASSETS',
-		path: '/assets'
+		path: '/assets',
+		icon:'fa-box-archive'
 	},
 	{
 		title: 'LOCATIONS',
-		path: '/location'
+		path: '/location',
+		icon:'fa-location-dot'
 	},
 	{
 		title: 'DEPARTMENTS',
-		path: '/departments'
+		path: '/departments',
+		icon:'fa-building'
 	},
 	{
 		title: 'ASSET_CATEGORIES',
-		path: '/asset-categories'
+		path: '/asset-categories',
+		icon:'fa-tags'
 	},
 	{
 		title: 'USER_MANAGEMENT',
-		path: '/user-management'
+		path: '/user-management',
+		icon:'fa-user-gear'
 	},
 	{
 		title: 'ROLE_MATRIX',
-		path: '/role-matrix'
+		path: '/role-matrix',
+		icon:'fa-diagram-project'
 	},
 ]
 
@@ -63,4 +69,23 @@ export enum TaskStatus {
 export const REQUEST_STATUSES = [
 	'APPROVED', 'REJECTED', 'NEW'
 ]
+
+
+export const FILE_BORDER_KEYS = [
+	{
+		style: 'green-text',
+		desc: 'Successful upload',
+		titleDesc: 'File has been successfully uploaded',
+	},
+	{
+		style: 'red-text',
+		desc: 'Upload failed',
+		titleDesc: 'Click to retry icon failed uploads or try again later',
+	},
+	{
+		style: 'orange-text',
+		desc: 'Duplicate file',
+		titleDesc: 'Duplicate files are skipped during upload',
+	},
+];
 

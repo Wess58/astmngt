@@ -29,6 +29,10 @@ import { DepartmentsComponent } from './components/departments/departments.compo
 import { LocationsComponent } from './components/locations/locations.component';
 import { CategoriesComponent } from './components/assets/categories/categories.component';
 import { HasOperationDirective } from './directives/has-operation.directive';
+import { ImageUploadComponent } from './components/image-upload/image-upload.component';
+import { SanitizeFileUrlPipe } from './pipes/sanitize-file-url.pipe';
+import { FileSizePipe } from './pipes/file-size.pipe';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
 
 
 @NgModule({
@@ -51,7 +55,11 @@ import { HasOperationDirective } from './directives/has-operation.directive';
     LocationsComponent,
     CategoriesComponent,
     HasOperationDirective,
-    ImageFallbackDirective
+    ImageFallbackDirective,
+    ImageUploadComponent,
+    SanitizeFileUrlPipe,
+    FileSizePipe,
+    ClickOutsideDirective
   ],
   imports: [
     BrowserModule,
