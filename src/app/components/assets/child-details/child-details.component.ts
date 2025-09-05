@@ -1,4 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AssetsService } from '../../../services/assets.service';
+
 
 @Component({
   selector: 'app-child-details',
@@ -15,6 +17,11 @@ export class ChildDetailsComponent implements OnChanges {
   @Input() isCreate: boolean = false;
 
 
+  constructor(
+    private assetsService: AssetsService
+  ){
+    
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['asset']) {
@@ -49,7 +56,7 @@ export class ChildDetailsComponent implements OnChanges {
       },
       {
         title: 'Purchase value',
-        value: this.formatCurrency(this.asset.purchaseCost) ?? 0
+        value: this.assetsService.formatCurrency(this.asset.purchaseCost) ?? 0
       },
       {
         title: 'Full depreciation date',
@@ -57,7 +64,7 @@ export class ChildDetailsComponent implements OnChanges {
       },
       {
         title: 'Current value',
-        value: this.formatCurrency(this.asset.currentValue) ?? 0
+        value: this.assetsService.formatCurrency(this.asset.currentValue) ?? 0
       },
       {
         title: 'Depreciation rate',
@@ -118,8 +125,5 @@ export class ChildDetailsComponent implements OnChanges {
   }
 
 
-  formatCurrency(amount: string): string {
-    return String(amount)?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
 
 }

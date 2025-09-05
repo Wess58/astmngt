@@ -172,6 +172,10 @@ export class AssetsListComponent implements OnInit {
         next: (res) => {
           // console.log(res);
           this.assets = res.body;
+          // this.assets.forEach((asset: any) => {
+          //   !asset?.media?.length ? asset.media = [] : '';
+          //   asset?.media.splice(0, 0, asset.coverImageUrl);
+          // });
           this.totalLength = Number(res.headers.get('X-Total-Items'));
           this.loadingAssets = false;
         },
@@ -268,8 +272,7 @@ export class AssetsListComponent implements OnInit {
   }
 
   checkForEmptyFields(): boolean {
-    if (this.step === 1) return !this.asset.name || !this.asset.model || !this.asset.modelNumber;
-    // || !this.assetImages.length;
+    if (this.step === 1) return !this.asset.name || !this.asset.model || !this.asset.modelNumber || (this.assetImages.length && this.assetImages.some((img: any) => img.uploading || img.compressing));
     if (this.step === 2) return !this.asset.purchaseDate || !this.asset.purchaseCost;
     // if (this.step === 3) return !this.asset.holder.id || !this.userSearchTerm;
     return false;
@@ -366,13 +369,13 @@ export class AssetsListComponent implements OnInit {
     const asset = Object.assign({}, this.asset);
 
     asset.identifier = asset.modelNumber ?? '';
-    asset.purchaseCost = +asset.purchaseCost;
-    asset.currentValue = +asset.currentValue;
+    asset.purchaseCost = +(asset.purchaseCost?.replace(/,/g, ''));
+    asset.currentValue = +(asset.currentValue?.replace(/,/g, ''));
     asset.depreciation = +asset.depreciation || 0;
 
     !asset?.coverImageUrl?.length ? asset.coverImageUrl = this.assetImages[0].uuid : '';
     asset.media = this.assetImages.filter((image: any) => image.uuid !== asset.coverImageUrl).map((image: any) => image.uuid);
-
+    
     return asset;
   }
 
@@ -416,6 +419,10 @@ export class AssetsListComponent implements OnInit {
 
     this.action = action;
     this.asset = Object.assign({}, asset);
+    this.asset.purchaseCost = this.assetsService.formatCurrency(this.asset.purchaseCost);
+    this.asset.currentValue = this.assetsService.formatCurrency(this.asset.currentValue);
+
+
     this.userSearchTerm = this.asset?.holder?.name ?? '';
 
     this.assetImages = [];

@@ -5,8 +5,13 @@
   box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.02);
 
   .nav-logo {
-    height: 45px;
+    height: 50px;
+    border: 1px solid #e1e1e1;
+    border-radius: 12px;
+    padding: 5px;
+    margin-right: 10px;
   }
+
   .platform-name {
     color: var(--app-dark-blue);
     font-weight: 600;

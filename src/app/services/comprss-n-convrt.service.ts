@@ -116,7 +116,7 @@ export class ComprssNConvrtService {
             if (res.type === HttpEventType.UploadProgress) {
               file.progress = Math.round((100 * res.loaded) / res.total);
             } else if (res instanceof HttpResponse) {
-              console.log(res);
+              // console.log(res);
               file.uploading = false;
 
               if (res.body[0]?.uploadStatus === 'OK') {

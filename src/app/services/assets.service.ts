@@ -67,4 +67,9 @@ export class AssetsService {
   deleteAssetCategory(id: number): Observable<any> {
     return this.httpClient.delete(`${this.baseUrl}/asset-categories/${id}`);
   }
+
+  formatCurrency(amount: string): string {
+    return String(amount)?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
 }
