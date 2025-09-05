@@ -1,0 +1,25 @@
+<div class="tabular-layout">
+	<div class="tabular-item" *ngFor="let data of details;index as i">
+		<div class="d-flex justify-content-between">
+			<span class="title">{{data.title}} </span>
+			<span class="value" *ngIf="!data.isStatus">{{!data.unformarttedDate ? (data.value ?? '—') :
+				(data.value | date : 'MMM d y , HH:mm') }} </span>
+			<span class="badge" *ngIf="data.isStatus" [ngClass]="{
+				'badge-primary': data.value === 'NEW',
+				'badge-success': data.value === 'ACTIVE',
+				'badge-danger':  data.value === 'DELETED'
+			}">{{ data.value }}</span>
+		</div>
+	</div>
+</div>
+
+<span class="instruction-title">Asset images</span>
+
+<div class="tabular-layout-images">
+	@for (file of images; track $index) {
+	<div class="image-item">
+		<img class="d-block w-100" [src]="file.uuid ? (file.uuid | sanitizeFileUrl) : file.previewUrl" alt="blob"
+			imageFallback />
+	</div>
+	}
+</div>

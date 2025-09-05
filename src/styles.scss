@@ -6,7 +6,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
 // @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Manrope:wght@200..800&display=swap');
 
-
 // ng build && sudo docker build -t melioratech/hfc-credit-card-stmt-web:1.0.1 . && sudo docker push melioratech/hfc-credit-card-stmt-web:1.0.1 && kubectldev scale --replicas=0 deployment/hfc-credit-card-stmt-web && kubectldev scale --replicas=1 deployment/hfc-credit-card-stmt-web
 
 :root {
@@ -26,7 +25,7 @@ html {
   letter-spacing: 1px;
   // font-family: "Montserrat", sans-serif;
   font-family: "Manrope", sans-serif;
-    // font-family: "DM Sans", sans-serif;
+  // font-family: "DM Sans", sans-serif;
   font-optical-sizing: auto;
 }
 
@@ -62,6 +61,14 @@ textarea {
   background-clip: padding-box !important;
   color: #5f6063 !important;
   padding: 10px 12px !important;
+}
+
+input[type="checkbox"] {
+  margin-right: 15px;
+  margin-left: 5px;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
 }
 
 input:active,
@@ -131,6 +138,11 @@ textarea:hover {
   color: #80868b !important;
 }
 
+.light-grey-text,
+.text-muted {
+  color: #80868b !important;
+}
+
 .orange-text {
   color: #ffa500 !important;
 }
@@ -155,28 +167,6 @@ textarea:hover {
 
 .alert {
   font-size: 0.9rem;
-}
-
-.custom-side-toast {
-  min-width: 250px;
-  // max-width: 300px;
-  position: fixed;
-  right: 20px;
-  top: 80px;
-  font-weight: 500;
-  z-index: 1000;
-  margin-right: -1000px;
-  transition: all 0.2s ease;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-
-  .fa-solid {
-    font-size: 1.1rem !important;
-  }
-}
-
-.show-toast {
-  margin-right: 0;
 }
 
 .not-allowed {
@@ -300,6 +290,13 @@ textarea:hover {
   color: #fff !important;
 }
 
+.instruction-title {
+  font-size: 1rem;
+  display: block;
+  color: #3c4043;
+  font-weight: 600;
+}
+
 .home-page {
   padding-top: 100px;
   overflow-x: hidden;
@@ -314,8 +311,6 @@ textarea:hover {
     color: #80868b;
   }
 }
-
-
 
 // ************************************
 // CUSTOM SEARCH LIST STYLING FOR SEARCH TO SELECT
@@ -371,6 +366,64 @@ textarea:hover {
   }
 }
 
+// CUSTOM TABULAR STYLING
+// ***********************************
+
+.tabular-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(50% - 5px));
+  // gap: 0 10px;
+  margin-bottom: 20px;
+
+  .tabular-item {
+    padding: 15px 10px;
+    border-bottom: 1px solid #f1f1f1;
+
+    &:nth-child(odd) {
+      border-right: 1px solid #e1e1e1;
+    }
+
+    &:hover {
+      background-color: #f1f1f155;
+      transition: background-color 0.2s;
+    }
+
+    .title {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #3c4043;
+      max-width: 40%;
+      display: block;
+    }
+
+    .value {
+      color: #5f6063;
+      font-size: 0.9rem;
+      max-width: 60%;
+      display: block;
+      text-align: right;
+    }
+  }
+}
+
+.tabular-layout-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 150px);
+  gap: 0 15px;
+  margin: 20px 0;
+
+  .image-item {
+    height: 150px;
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid #e1e1e1;
+    }
+  }
+}
+
 // TABLE STYLING
 // ****************************************
 
@@ -413,7 +466,7 @@ textarea:hover {
       &:hover {
         td {
           background-color: #f1f1f155;
-          transition: all 0.2s;
+          transition: background-color 0.2s;
         }
         .redirect-link {
           text-decoration: underline;
@@ -441,7 +494,24 @@ textarea:hover {
         cursor: pointer;
         text-underline-offset: 2px;
         font-weight: 500;
-        transition: all 0.2s;
+        transition: text-decoration 0.2s;
+        display: flex;
+      }
+
+      .img-holder {
+        width: 60px;
+        height: 60px;
+        border: 1px solid #f1f1f1;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-right: 20px;
+        background-color: #f1f1f1;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
 
       .word-break {
@@ -533,9 +603,6 @@ textarea:hover {
   }
 }
 
-
-
-
 //  NEW MINIMALIST WIZARD STEPS UX STYLING  */
 //  ********************************************** */
 .wizard-steps {
@@ -556,37 +623,6 @@ textarea:hover {
   .step-desc {
     color: #5f6368;
     font-size: 0.9rem;
-  }
-}
-
-// CUSTOM TABULAR STYLING
-// ***********************************
-
-.tabular-layout {
-  .tabular-item {
-    padding: 10px;
-    border-bottom: 1px solid #f1f1f1;
-
-    &:hover {
-      background-color: #f1f1f155;
-      transition: all 0.2s;
-    }
-
-    .title {
-      font-weight: 500;
-      font-size: 0.9rem;
-      color: #80868b;
-      max-width: 40%;
-      display: block;
-    }
-
-    .value {
-      color: #3c4043;
-      font-size: 0.9rem;
-      max-width: 60%;
-      display: block;
-      text-align: right;
-    }
   }
 }
 
@@ -655,7 +691,7 @@ textarea:hover {
     padding: 5px 10px;
     background-color: #fff;
     border: 1px solid #fff;
-    transition: all 0.1s;
+    transition: background-color 0.1s, border 0.1s;
 
     &:hover {
       background-color: #f1f1f1;

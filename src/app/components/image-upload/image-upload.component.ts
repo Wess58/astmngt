@@ -25,7 +25,7 @@ export class ImageUploadComponent implements OnChanges {
 
   @Input() title: string = 'Asset images';
   @Input() inputImages: any = [];
-  @Input() coverImage: any = [];
+  @Input() coverImageUrl: any = [];
   @Input() showSetCoverImage: boolean = true;
   @Input() limit: number = 20;
 
@@ -114,7 +114,7 @@ export class ImageUploadComponent implements OnChanges {
   }
 
   setCoverImage(file: any): void {
-    this.coverImage = file.uuid;
+    this.coverImageUrl = file.uuid;
     this.coverImageEmit.emit(file.uuid);
   }
 

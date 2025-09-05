@@ -33,6 +33,8 @@ import { ImageUploadComponent } from './components/image-upload/image-upload.com
 import { SanitizeFileUrlPipe } from './pipes/sanitize-file-url.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { ChildDetailsComponent } from './components/assets/child-details/child-details.component';
+import { InputCommaFormatDirective } from './directives/input-comma-format.directive';
 
 
 @NgModule({
@@ -59,7 +61,9 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
     ImageUploadComponent,
     SanitizeFileUrlPipe,
     FileSizePipe,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    ChildDetailsComponent,
+    InputCommaFormatDirective
   ],
   imports: [
     BrowserModule,

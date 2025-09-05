@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import moment from 'moment';
 import { AssetsService } from '../../../services/assets.service';
 import { ToastService } from '../../../services/toast.service';
-import { fadeIn } from '../../../animations';
+import { fadeIn, fadeInResults } from '../../../animations';
 import { DepartmentsService } from '../../../services/departments.service';
 import { LocationService } from '../../../services/location.service';
 import { UsersService } from '../../../services/users.service';
@@ -15,7 +15,7 @@ import { UsersService } from '../../../services/users.service';
   standalone: false,
   templateUrl: './assets-list.component.html',
   styleUrl: './assets-list.component.scss',
-  animations: [fadeIn]
+  animations: [fadeIn, fadeInResults]
 })
 export class AssetsListComponent implements OnInit {
 
@@ -24,7 +24,7 @@ export class AssetsListComponent implements OnInit {
   };
 
   asset: any = {
-    category: { id: 0 },
+    assetCategory: { id: 0 },
     location: { id: 0 },
     department: { id: 0 }
   };
@@ -87,9 +87,6 @@ export class AssetsListComponent implements OnInit {
 
   ngOnInit(): void {
     window.scrollTo({ top: 0, behavior: "smooth" });
-
-    if (localStorage.getItem('asset')) this.asset = JSON.parse(localStorage.getItem('asset') || '{}');
-  
     this.setFilterParams();
   }
 
@@ -232,7 +229,7 @@ export class AssetsListComponent implements OnInit {
       {
         next: (res) => {
           this.categories = res.body;
-          this.asset.category.id = this.categories[0].id ?? 0;
+          this.asset.assetCategory.id = this.categories[0].id ?? 0;
         }
       }
     )
@@ -266,24 +263,54 @@ export class AssetsListComponent implements OnInit {
 
   navigateSteps(action: string = 'back'): void {
     action === 'next' ? this.step++ : this.step--;
-    localStorage.setItem('asset', JSON.stringify(this.asset));
+    if (this.step === 4) this.addEntityNames();
+    // localStorage.setItem('asset', JSON.stringify(this.asset));
   }
 
   checkForEmptyFields(): boolean {
-    if (this.step === 1) return !this.asset.name || !this.asset.model || !this.asset.modelNumber || !this.assetImages.length;
-    if (this.step === 2) return !this.asset.purchaseDate || !this.asset.purchaseCost || !this.asset.currentValue;
-    if (this.step === 3) return !this.asset.holder;
+    if (this.step === 1) return !this.asset.name || !this.asset.model || !this.asset.modelNumber;
+    // || !this.assetImages.length;
+    if (this.step === 2) return !this.asset.purchaseDate || !this.asset.purchaseCost;
+    // if (this.step === 3) return !this.asset.holder.id || !this.userSearchTerm;
     return false;
+  }
+
+  checkPercentageValue(): void {
+    setTimeout(() => {
+      this.asset.depreciation = (+this.asset.depreciation > 100) ? this.asset.depreciation.substring(0, 2) : this.asset.depreciation;
+    }, 5);
+  }
+
+  verifyDepDate(): void {
+    const isGreater = this.asset.fullyDepreciatedDate && moment(this.asset.purchaseDate).diff(moment(this.asset.fullyDepreciatedDate)) >= 0;
+    if (isGreater) {
+      setTimeout(() => {
+        this.asset.fullyDepreciatedDate = moment(this.asset.purchaseDate).add(10, 'days').format('YYYY-MM-DD');
+      }, 5);
+    }
+  }
+
+  addEntityNames(): void {
+    this.asset.assetCategory.name = this.categories.find((item: any) => +this.asset.assetCategory.id === item.id)?.name;
+    this.asset.department.name = this.departments.find((item: any) => +this.asset.department.id === item.id)?.name;
+    this.asset.location.name = this.locations.find((item: any) => +this.asset.location.id === item.id)?.name;
+    this.asset.holder.name = this.users.find((item: any) => +this.asset.holder.id === item.id)?.name || '';
+    this.userSearchTerm = this.asset.holder.name;
+    this.asset.holder.employeeNumber = this.users.find((item: any) => +this.asset.holder.id === item.id)?.employeeNumber || '';
+  }
+
+  unassignHolder(): void {
+    this.asset.holder.id = 0;
+    this.userSearchTerm = '';
   }
 
   createAsset(): void {
 
     this.performingAction = true;
     this.actionFail = false;
+    // console.log(this.assetFieldsFormatter());
 
-    this.asset.identifier = this.asset.modelNumber ?? '';
-
-    this.assetsService.create(this.asset).subscribe(
+    this.assetsService.create(this.assetFieldsFormatter()).subscribe(
       {
         next: (res) => {
 
@@ -311,10 +338,8 @@ export class AssetsListComponent implements OnInit {
     this.performingAction = true;
     this.actionFail = false;
 
-    this.asset.identifier = this.asset.modelNumber ?? '';
 
-
-    this.assetsService.update(this.asset).subscribe(
+    this.assetsService.update(this.assetFieldsFormatter()).subscribe(
       {
         next: (res) => {
           this.performingAction = false;
@@ -332,6 +357,23 @@ export class AssetsListComponent implements OnInit {
         }
       }
     )
+  }
+
+  assetFieldsFormatter(): any {
+
+    // moment().format('DD/MM/YYYY')
+
+    const asset = Object.assign({}, this.asset);
+
+    asset.identifier = asset.modelNumber ?? '';
+    asset.purchaseCost = +asset.purchaseCost;
+    asset.currentValue = +asset.currentValue;
+    asset.depreciation = +asset.depreciation || 0;
+
+    !asset?.coverImageUrl?.length ? asset.coverImageUrl = this.assetImages[0].uuid : '';
+    asset.media = this.assetImages.filter((image: any) => image.uuid !== asset.coverImageUrl).map((image: any) => image.uuid);
+
+    return asset;
   }
 
   deleteAsset(): void {
@@ -364,14 +406,17 @@ export class AssetsListComponent implements OnInit {
   }
 
   setCoverImage(uuid: any): void {
-    this.asset.coverImage = uuid;
+    this.asset.coverImageUrl = uuid;
   }
 
 
   selectAsset(asset: any, action: string): void {
 
+    this.resetAsset();
+
     this.action = action;
     this.asset = Object.assign({}, asset);
+    this.userSearchTerm = this.asset?.holder?.name ?? '';
 
     this.assetImages = [];
     this.assetImages = JSON.parse(JSON.stringify(
@@ -396,7 +441,7 @@ export class AssetsListComponent implements OnInit {
       department: {
         id: this.departments[0]?.id || 0
       },
-      category: {
+      assetCategory: {
         id: this.categories[0]?.id || 0
       },
       holder: {
@@ -404,6 +449,7 @@ export class AssetsListComponent implements OnInit {
       }
     };
 
+    this.step = 1;
     this.performingAction = false;
     this.actionFail = false;
     this.assetImages = [];

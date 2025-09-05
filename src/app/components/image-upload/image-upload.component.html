@@ -45,9 +45,9 @@
 			[ngClass]="{ 'duplicate-error': file.duplicate, 'upload-success': file.uploaded, 'upload-error': file.failed }">
 
 			<div class="product-content">
-				<div class="terms-checkbox cursor-pointer" appTooltip="Set as product cover image"
+				<div class="terms-checkbox cursor-pointer" appTooltip="Set as cover image"
 					*ngIf="showSetCoverImage">
-					<input type="checkbox" [name]="'coverImage-' + (i+1)" [checked]="coverImage === file.uuid"
+					<input type="checkbox" [name]="'coverImageUrl-' + (i+1)" [checked]="coverImageUrl === file.uuid"
 						(change)="setCoverImage(file)"
 						[disabled]="disableIfFileActivity() || file.duplicate || !file.uploaded" />
 				</div>
