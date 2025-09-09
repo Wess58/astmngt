@@ -13,7 +13,7 @@ export class UsersService {
   constructor(private httpClient: HttpClient) { }
 
   loginUser(data: any): Observable<any> {
-    return this.httpClient.post(`${this.baseUrl}/users/auth`, data);
+    return this.httpClient.post(`${this.baseUrl}/account/login`, data);
   }
 
   getUsers(options: any): Observable<any> {

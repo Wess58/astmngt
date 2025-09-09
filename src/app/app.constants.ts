@@ -20,7 +20,7 @@ export const MENUS_WITH_PATHS = [
 	},
 	{
 		title: 'LOCATIONS',
-		path: '/location',
+		path: '/locations',
 		icon:'fa-location-dot'
 	},
 	{

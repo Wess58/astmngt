@@ -3,6 +3,7 @@ import { style, animate, transition, trigger } from '@angular/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MENUS_WITH_PATHS } from "../../app.constants";
 import { ApiService } from '../../services/api.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-login',
@@ -39,7 +40,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     public router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private usersService: UsersService
   ) { }
 
   ngOnInit(): void {
@@ -49,44 +51,43 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  requestOTP(): void {
+  loginUser(): void {
     this.authenticationError = false;
     this.logingIn = true;
 
-    // const data = {
-    //   username: this.login.username,
-    //   password: this.login.password
-    // }
+    const data = {
+      username: this.login.username,
+      password: this.login.password
+    }
 
-    this.router.navigateByUrl('/assets')
+    this.usersService.loginUser(data).subscribe(
+      {
+        next: (res) => {
+          console.log(res);
+          
+          // this.stage = 'verifyOTPStage';
+          // this.login.twoFACode = res.twoFACode;
+          //       this.getAccount();
 
 
-    // this.apiService.requestOTP(data).subscribe(
-    //   {
-    //     next: (res) => {
-    //       // console.log(res);
+          // this.clearTimeOut();
+          // this.countDown(60);
 
-    //       this.stage = 'verifyOTPStage';
-    //       this.login.twoFACode = res.twoFACode;
+        },
+        error: (error) => {
+          console.log(error);
 
-    //       this.clearTimeOut();
-    //       this.countDown(60);
+          if (error?.error?.code === 401) {
+            this.errorMessage = 'Your account has been deactivated. Please contact ICT support for assistance.';
+          } else {
+            this.errorMessage = 'Please check your username or password and try again.';
+          }
 
-    //     },
-    //     error: (error) => {
-    //       console.log(error);
-
-    //       if (error?.error?.code === 401) {
-    //         this.errorMessage = 'Your account has been deactivated. Please contact ICT support for assistance.';
-    //       } else {
-    //         this.errorMessage = 'Please check your username or password and try again.';
-    //       }
-
-    //       this.authenticationError = true;
-    //       this.logingIn = false;
-    //     },
-    //   }
-    // )
+          this.authenticationError = true;
+          this.logingIn = false;
+        },
+      }
+    )
   }
 
 

@@ -3,7 +3,7 @@
 
 		<div class="card card-table">
 
-			<div class="table-header-section mb-1">
+			<div class="table-header-section">
 				<div>
 					<h4 class="table-title"> Assets
 						<small class="table-subtitle" *ngIf="totalLength">({{totalLength}} items)</small>
@@ -23,7 +23,10 @@
 
 			<span class="filter-text">Filtering options</span>
 			<div class="filter-wrapper">
-				<!-- <div class="wrap ms-0">
+
+				<div class="w-75">
+
+					<!-- <div class="wrap ms-0">
 					<div class="uneditable-input" (click)="openInput('daterangeInput')">
 						<span> {{daterange.start | date : 'MMM d, y'}} <small>&nbsp;to&nbsp;</small> {{daterange.end |
 							date
@@ -35,19 +38,64 @@
 					</div>
 				</div> -->
 
-				<div class="wrap">
-					<select class="form-control" name="status" [(ngModel)]="filters.status" (change)="getAssets(1)">
-						<option value="">All statuses</option>
-						<option value="READ">Read</option>
-						<option value="PENDING">Pending</option>
-						<option value="FAILED">Failed</option>
-						<option value="INVALID">Invalid</option>
-					</select>
-				</div>
+					<div class="wrap">
+						<select class="form-control" name="status" [(ngModel)]="filters.status" (change)="getAssets(1)">
+							<option value="">All statuses</option>
+							<option value="READ">Read</option>
+							<option value="PENDING">Pending</option>
+							<option value="FAILED">Failed</option>
+							<option value="INVALID">Invalid</option>
+						</select>
+					</div>
 
-				<div class="wrap">
-					<input type="text" class="form-control" placeholder="name" name="name" [(ngModel)]="filters.name"
-						(keyup.enter)="getAssets(1)" />
+					<div class="wrap">
+						<select class="form-control" name="assetCategoryId" [(ngModel)]="filters.assetCategoryId"
+							(change)="getAssets(1)">
+							<option value="">All categories</option>
+							<option *ngFor="let category of categories;index as i" [value]="category.id">
+								{{category.name}} </option>
+						</select>
+					</div>
+
+					<div class="wrap">
+						<select class="form-control" name="locationId" [(ngModel)]="filters.locationId"
+							(change)="getAssets(1)">
+							<option value="">All locations</option>
+							<option *ngFor="let location of locations;index as i" [value]="location.id">
+								{{location.name}} </option>
+						</select>
+					</div>
+
+					<div class="wrap">
+						<select class="form-control" name="departmentId" [(ngModel)]="filters.departmentId"
+							(change)="getAssets(1)">
+							<option value="">All departments</option>
+							<option *ngFor="let department of departments;index as i" [value]="department.id">
+								{{department.name}} </option>
+						</select>
+					</div>
+
+					<div class="wrap position-relative">
+						<input type="text" class="form-control" name="userSearchTerm" id="openDefaultDisplayFields"
+							[(ngModel)]="userSearchTerm" (click)="$event.preventDefault();openHolder = true"
+							placeholder="Search holder" autocomplete="off">
+						<div class="search-res-listing" *ngIf="openHolder" appClickOutside
+							(appClickOutside)="openHolder = false">
+							<div class="search-item disp-field" *ngFor="let user of filterUsers();"
+								(click)="selectHolder(user)">
+								<span class="d-block name">{{ user?.name }} </span>
+								<small class="text-muted"> {{user?.employeeNumber}} </small>
+							</div>
+							<div class="search-item text-center" *ngIf="!filterUsers().length">
+								<span class="name"> no results found </span>
+							</div>
+						</div>
+					</div>
+
+					<div class="wrap">
+						<input type="text" class="form-control" placeholder="Asset name" name="name"
+							[(ngModel)]="filters.name" (keyup.enter)="getAssets(1)" />
+					</div>
 				</div>
 
 
@@ -65,10 +113,8 @@
 				</div>
 			</div>
 
-			<div class="donut-container" *ngIf="loadingAssets" [@fadeIn]>
-				<div class="donut-wrapper">
-					<div class="donut multi"></div>
-				</div>
+			<div class="donut-wrapper" *ngIf="loadingAssets" [@fadeIn]>
+				<div class="donut multi"></div>
 			</div>
 
 			<!-- <small class="d-block text-muted ps-2 mb-2 border-bottom pb-1" *ngIf="assets.length && !loadingAssets"
@@ -96,11 +142,10 @@
 					<tr
 						*ngFor="let asset of assets | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalLength}; index as i">
 						<td>
-							<a class="redirect-link" >
-								<!-- [routerLink]="['/asset-detail', asset.id]" -->
+							<a class="redirect-link" [routerLink]="['/assets', asset.id]">
 								<div class="img-holder">
-									<img [src]="(asset.coverImageUrl || asset.media[0] | sanitizeFileUrl)" [alt]="asset.name + ' image'"
-										imageFallback>
+									<img [src]="(asset.coverImageUrl || asset.media[0] | sanitizeFileUrl)"
+										[alt]="asset.name + ' image'" imageFallback>
 								</div>
 								{{asset.name}}
 							</a>
@@ -133,9 +178,9 @@
 									Actions
 								</button>
 								<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-									<!-- <a class="dropdown-item" [routerLink]="['/asset-detail', asset.id]">
+									<a class="dropdown-item" [routerLink]="['/assets', asset.id]">
 										View
-									</a> -->
+									</a>
 									<a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createAssetModal"
 										(click)="selectAsset(asset,'EDIT')">
 										Edit
@@ -161,175 +206,5 @@
 	</div>
 </div>
 
-
-
-
-<!-- Create / Edit User Modal -->
-<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="createAssetModal" tabindex="-1"
-	aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-xl modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" id="exampleModalLabel">{{asset?.id ? 'Edit' : 'Create'}} asset </h4>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-					id="closeEditModal"></button>
-			</div>
-			<div class="modal-body px-4">
-
-				<div class="wizard-steps">
-					<span class="steps-count d-block">Step {{step}} of 4 </span>
-					<span class="step-title d-block"> {{wizardSteps[step - 1].title}} </span>
-					<span class="step-desc d-block"> {{wizardSteps[step - 1].desc}} </span>
-				</div>
-
-				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
-					<strong>Failed to {{(asset?.id ? 'edit' : 'create')}} asset! </strong> {{errorMessage}}.
-				</div>
-
-
-				<!-- STEP 1 BASIC INFO -->
-				<div class="row" *ngIf="step === 1" [@fadeIn]>
-
-					<div class="form-group col-md-4">
-						<label for="">Name <sup class="red-text">*</sup></label>
-						<input type="text" class="form-control" name="name" [(ngModel)]="asset.name"
-							placeholder="Enter name" autocomplete="off">
-					</div>
-
-					<div class="form-group col-md-4">
-						<label for="">Category</label>
-						<select class="form-control" name="category" [(ngModel)]="asset.assetCategory.id">
-							<option value="" selected hidden>Select category</option>
-							<option *ngFor="let category of categories;index as i" [value]="category.id">
-								{{category.name}}
-							</option>
-						</select>
-					</div>
-
-					<div class="form-group col-md-4">
-						<label for="">Model <sup class="red-text">*</sup></label>
-						<input type="text" class="form-control" name="model" [(ngModel)]="asset.model"
-							placeholder="Enter model" autocomplete="off">
-					</div>
-
-
-					<div class="form-group col-md-4">
-						<label for="">Model number <sup class="red-text">*</sup></label>
-						<input type="text" class="form-control" name="modelNumber" [(ngModel)]="asset.modelNumber"
-							placeholder="Enter model number" autocomplete="off">
-					</div>
-
-
-
-					<app-image-upload [inputImages]="assetImages" (entityImagesEmit)="updateImages($event)">
-						<!-- [showSetCoverImage]="false" -->
-					</app-image-upload>
-
-				</div>
-
-				<!-- STEP 2 VALUE & PRICING  -->
-				<div class="row" *ngIf="step === 2" [@fadeIn]>
-					<div class="form-group col-md-4">
-						<label for="">Purchase date <sup class="red-text">*</sup></label>
-						<input type="date" class="form-control" name="purchaseDate" [(ngModel)]="asset.purchaseDate"
-							(change)="verifyDepDate()" autocomplete="off">
-					</div>
-
-					<div class="form-group col-md-4">
-						<label for="">Purchase value <sup class="red-text">*</sup></label>
-						<input type="text" class="form-control" name="purchaseCost" [(ngModel)]="asset.purchaseCost"
-							placeholder="Enter purchase cost" autocomplete="off" appCommasFormat pattern="[0-9]*"
-							inputmode="numeric"
-							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
-					</div>
-
-					<div class="form-group col-md-4">
-						<label for="">Current value </label>
-						<input type="text" class="form-control" name="currentValue" [(ngModel)]="asset.currentValue"
-							placeholder="Enter current value" autocomplete="off" appCommasFormat pattern="[0-9]*"
-							inputmode="numeric"
-							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
-					</div>
-
-					<div class="form-group col-md-4">
-						<label for="">Depreciation rate <small class="ms-2 text-muted">(%)</small> </label>
-						<input type="text" class="form-control" name="depreciation" [(ngModel)]="asset.depreciation"
-							(ngModelChange)="checkPercentageValue()" placeholder="Enter rate in percentage"
-							autocomplete="off" pattern="[0-9]*" inputmode="numeric"
-							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
-					</div>
-
-					<div class="form-group col-md-4">
-						<label for="">Full depreciation date</label>
-						<input type="date" class="form-control" name="fullyDepreciatedDate"
-							[(ngModel)]="asset.fullyDepreciatedDate" [min]="asset?.purchaseDate" autocomplete="off">
-					</div>
-				</div>
-
-				<!-- STEP 3 ASSIGNEE INFO  -->
-				<div class="row" *ngIf="step === 3" [@fadeIn]>
-					<div class="form-group col-md-4">
-						<label>Assigned location</label>
-						<select class="form-control" name="location" [(ngModel)]="asset.location.id"
-							required="required">
-							<option *ngFor="let location of locations;index as i" [value]="location.id">
-								{{location.name}} </option>
-						</select>
-					</div>
-
-					<div class="form-group col-md-4">
-						<label>Assigned department</label>
-						<select class="form-control" name="department" [(ngModel)]="asset.department.id"
-							required="required">
-							<option *ngFor="let department of departments;index as i" [value]="department.id">
-								{{department.name}} </option>
-						</select>
-					</div>
-
-					<div class="form-group col-md-4">
-						<div class="position-relative">
-							<label for="holder">Current holder / assignee <sup class="red-text">*</sup> </label>
-
-							<input type="text" class="form-control" name="displayFieldsSearchTerm"
-								id="openDefaultDisplayFields" [(ngModel)]="userSearchTerm"
-								(click)="$event.preventDefault();openHolder = true"
-								placeholder="Search and select holder" autocomplete="off">
-							<div class="search-res-listing" *ngIf="openHolder" appClickOutside
-								(appClickOutside)="openHolder = false" [@fadeInResults]>
-
-								<div class="search-item" (click)="unassignHolder()">
-									<span class="name red-text">Do not assign</span>
-								</div>
-								<div class="search-item disp-field" *ngFor="let user of filterUsers();"
-									[hidden]="user.checked" (click)="selectHolder(user)">
-									<span class="name">{{ user?.name }} </span>
-								</div>
-								<div class="search-item text-center" *ngIf="!filterUsers().length">
-									<span class="name"> no results found </span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-				</div>
-
-				<!-- STEP 4 VERIFICATION  -->
-				<div class="row" *ngIf="step === 4" [@fadeIn]>
-					<app-child-details [asset]="asset" [images]="assetImages"
-						[isCreate]="true"></app-child-details>
-				</div>
-
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-cancel"
-					(click)="step > 1 ? navigateSteps() : closeModal('closeEditModal')">
-					{{step > 1 ? 'Back' : 'Cancel'}}
-				</button>
-				<button type="button" class="btn btn-submit"
-					(click)="step === 4 ? (asset?.id ? editAsset() : createAsset()) : navigateSteps('next')"
-					[disabled]="performingAction || checkForEmptyFields()">
-					{{step < 4 ? 'Next' : performingAction ? 'Submitting ...' : 'Submit' }} </button>
-			</div>
-		</div>
-	</div>
-</div>
+<app-asset-create [propAsset]="asset" [locations]="locations" [departments]="departments" [categories]="categories"
+	[users]="users" [showModal]="clickedModal" (refreshAssetsEmit)="getAssets(page)"></app-asset-create>

@@ -222,6 +222,8 @@ export class CategoriesComponent implements OnInit {
   selectAssetCategory(assetCategory: any, action: string): void {
     this.assetCategory = { ...assetCategory };
     this.action = action;
+    console.log('here');
+    
   }
 
 
@@ -253,7 +255,9 @@ export class CategoriesComponent implements OnInit {
   }
 
   checkIfCategoryExists(): boolean {
-    return this.assetCategory?.name && this.assetCategories.some((col: any) => col.name === this.assetCategory?.name);
+    return this.assetCategory?.name && this.assetCategories.some((col: any) =>
+      col.name === this.assetCategory?.name &&
+      (this.action !== 'EDIT' || (this.action === 'EDIT' && col.id !== this.assetCategory?.id)));
   }
 
 
@@ -268,24 +272,6 @@ export class CategoriesComponent implements OnInit {
     }
   }
 
-
-  customFieldInterval(): void {
-
-    // this.
-
-    // interval(2000) // every 2s
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe(() => {
-    //     if (this.currentIndex < this.items.length) {
-    //       const item = this.items[this.currentIndex];
-    //       this.createEntity(item);
-    //       this.currentIndex++;
-    //     } else {
-    //       this.destroy$.next(); // stop interval
-    //       this.destroy$.complete();
-    //     }
-    //   });
-  }
 
   createOneCustomField(): void {
     // this.actionInProgress = true;

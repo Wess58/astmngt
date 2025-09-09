@@ -1,1 +1,31 @@
-<p>assets-detail works!</p>
+<div class="container-fluid home-page asset-detail" [@fadeIn]>
+	<div class="container">
+
+		<div class="card card-table">
+
+			<div class="table-header-section mb-4">
+				<div>
+					<h4 class="table-title"> Asset information </h4>
+				</div>
+				<div>
+					<button class="btn btn-create me-3" data-bs-toggle="modal" data-bs-target="#createAssetModal"
+						(click)="clickedModal = true;loadData()" [disabled]="isLoading">
+						<span><i class="fa-solid fa-pencil me-1"></i></span>&nbsp; Edit asset
+					</button>
+					<button class="btn btn-refresh" title="Refresh assets" [disabled]="isLoading"
+						(click)="getOneAsset()">
+						<span><i class="fa-solid fa-sync"></i></span>&nbsp; Refresh
+					</button>
+				</div>
+			</div>
+
+			<div class="donut-wrapper mt-5" *ngIf="isLoading" [@fadeIn]>
+				<div class="donut multi"></div>
+			</div>
+
+			<app-child-details *ngIf="!isLoading" [asset]="asset" [images]="assetImages" [@fadeIn]></app-child-details>
+		</div>
+	</div>
+</div>
+
+<app-asset-create [showModal]="clickedModal" [propAsset]="asset" [locations]="locations" [departments]="departments" [categories]="categories" [users]="users" (refreshAssetsEmit)="getOneAsset()"></app-asset-create>

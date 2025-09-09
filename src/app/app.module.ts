@@ -35,6 +35,7 @@ import { FileSizePipe } from './pipes/file-size.pipe';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { ChildDetailsComponent } from './components/assets/child-details/child-details.component';
 import { InputCommaFormatDirective } from './directives/input-comma-format.directive';
+import { AssetCreateComponent } from './components/assets/asset-create/asset-create.component';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import { InputCommaFormatDirective } from './directives/input-comma-format.direc
     FileSizePipe,
     ClickOutsideDirective,
     ChildDetailsComponent,
-    InputCommaFormatDirective
+    InputCommaFormatDirective,
+    AssetCreateComponent
   ],
   imports: [
     BrowserModule,

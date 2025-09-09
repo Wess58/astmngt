@@ -69,10 +69,8 @@
 				</div>
 			</div>
 
-			<div class="donut-container" *ngIf="loadingLocations" [@fadeIn]>
-				<div class="donut-wrapper">
-					<div class="donut multi"></div>
-				</div>
+			<div class="donut-wrapper" *ngIf="loadingLocations" [@fadeIn]>
+				<div class="donut multi"></div>
 			</div>
 
 			<table class="table" *ngIf="locations.length && !loadingLocations" [@fadeIn]>

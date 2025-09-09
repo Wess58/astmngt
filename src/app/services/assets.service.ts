@@ -19,7 +19,7 @@ export class AssetsService {
   }
 
   getOne(id: number): Observable<any> {
-    return this.httpClient.get<any>(environment.API_ENDPOINT + '/api/assets' + id,
+    return this.httpClient.get<any>(environment.API_ENDPOINT + '/api/assets/' + id,
       { observe: 'response' });
   }
 
@@ -51,7 +51,7 @@ export class AssetsService {
   }
 
   getOneAssetCategory(id: number): Observable<any> {
-    return this.httpClient.get<any>(environment.API_ENDPOINT + '/api/asset-categories' + id,
+    return this.httpClient.get<any>(environment.API_ENDPOINT + '/api/asset-categories/' + id,
       { observe: 'response' });
   }
 

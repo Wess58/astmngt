@@ -7,6 +7,7 @@ import { CategoriesComponent } from './components/assets/categories/categories.c
 import { UsersManagementComponent } from './components/users-management/users-management.component';
 import { RoleMatrixComponent } from './components/role-matrix/role-matrix.component';
 import { LoginComponent } from './auth/login/login.component';
+import { AssetsDetailComponent } from './components/assets/assets-detail/assets-detail.component';
 
 const routes: Routes = [
   {
@@ -19,7 +20,11 @@ const routes: Routes = [
     component: AssetsListComponent
   },
   {
-    path: 'location',
+    path: 'assets/:id',
+    component: AssetsDetailComponent
+  },
+  {
+    path: 'locations',
     component: LocationsComponent
   },
   {

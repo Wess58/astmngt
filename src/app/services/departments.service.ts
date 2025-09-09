@@ -19,7 +19,7 @@ export class DepartmentsService {
   }
 
   getOne(id: number): Observable<any> {
-    return this.httpClient.get<any>(environment.API_ENDPOINT + '/api/departments' + id,
+    return this.httpClient.get<any>(environment.API_ENDPOINT + '/api/departments/' + id,
       { observe: 'response' });
   }
 

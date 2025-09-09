@@ -19,7 +19,7 @@ export class LocationService {
   }
 
   getOne(id: number): Observable<any> {
-    return this.httpClient.get<any>(environment.API_ENDPOINT + '/api/locations' + id,
+    return this.httpClient.get<any>(environment.API_ENDPOINT + '/api/locations/' + id,
       { observe: 'response' });
   }
 

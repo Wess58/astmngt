@@ -31,7 +31,7 @@
 			<span class="filter-text">Filtering options</span>
 			<div class="filter-wrapper">
 
-				<div class="wrap ms-0">
+				<div class="wrap">
 					<select class="form-control" name="status" [(ngModel)]="filters.status"
 						(change)="getAssetCategories(1)">
 						<option value="">All statuses</option>
@@ -58,10 +58,8 @@
 				</div>
 			</div>
 
-			<div class="donut-container" *ngIf="loadingCategories" [@fadeIn]>
-				<div class="donut-wrapper">
-					<div class="donut multi"></div>
-				</div>
+			<div class="donut-wrapper" *ngIf="loadingCategories" [@fadeIn]>
+				<div class="donut multi"></div>
 			</div>
 
 			<table class="table" *ngIf="assetCategories.length && !loadingCategories" [@fadeIn]>
@@ -118,7 +116,7 @@
 										Deactivate
 									</a> -->
 									<a class="dropdown-item" data-bs-toggle="modal"
-										data-bs-target="#categoryActionModal"
+										data-bs-target="#assetCategoryActionModal"
 										(click)="selectAssetCategory(category,'DELETE')">
 										Delete
 									</a>
@@ -346,39 +344,40 @@
 			</div>
 		</div>
 	</div>
+</div>
 
 
-	<!-- Activate / Deactivate / Delete AssetCategory Modal -->
-	<div class="modal fade" id="assetCategoryActionModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-		aria-hidden="true">
-		<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" id="exampleModalLabel">{{action | titlecase}} asset category </h4>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-						id="closeAssetCategoryActionModal"></button>
+<!-- Activate / Deactivate / Delete AssetCategory Modal -->
+<div class="modal fade" id="assetCategoryActionModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">{{action | titlecase}} asset category </h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeAssetCategoryActionModal"></button>
+			</div>
+			<div class="modal-body py-4">
+
+				<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
+					<strong>Failed to {{action | lowercase}} asset category! </strong> {{errorMessage}}.
 				</div>
-				<div class="modal-body py-4">
 
-					<div class="alert alert-danger" *ngIf="actionFail" [@fadeIn]>
-						<strong>Failed to {{action | lowercase}} asset category! </strong> {{errorMessage}}.
-					</div>
+				You are about to <strong [ngClass]="action !== 'ACTIVATE' ? 'red-text' : 'green-text'">
+					{{action | lowercase}} </strong>
+				<strong>{{assetCategory?.name}}'s</strong>
+				account. Would you like to proceed?
 
-					You are about to <strong [ngClass]="action !== 'ACTIVATE' ? 'red-text' : 'green-text'">
-						{{action | lowercase}} </strong>
-					<strong>{{assetCategory?.name}}'s</strong>
-					account. Would you like to proceed?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
 
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn" [ngClass]="action !== 'ACTIVATE' ? 'btn-delete'  : 'btn-submit'"
+					(click)="action === 'DELETE' ? deleteAssetCategory() : editAssetCategory()"
+					[disabled]="performingAction">{{action |
+					titlecase}}</button>
 
-					<button type="button" class="btn" [ngClass]="action !== 'ACTIVATE' ? 'btn-delete'  : 'btn-submit'"
-						(click)="action === 'DELETE' ? deleteAssetCategory() : editAssetCategory()"
-						[disabled]="performingAction">{{action |
-						titlecase}}</button>
-
-				</div>
 			</div>
 		</div>
 	</div>
+</div>

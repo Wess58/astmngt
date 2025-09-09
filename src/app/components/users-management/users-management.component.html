@@ -68,10 +68,8 @@
 				</div>
 			</div>
 
-			<div class="donut-container" *ngIf="loadingUsers" [@fadeIn]>
-				<div class="donut-wrapper">
-					<div class="donut multi"></div>
-				</div>
+			<div class="donut-wrapper" *ngIf="loadingUsers" [@fadeIn]>
+				<div class="donut multi"></div>
 			</div>
 
 			<table class="table" *ngIf="users.length && !loadingUsers" [@fadeIn]>
