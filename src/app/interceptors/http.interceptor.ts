@@ -11,7 +11,7 @@ import { Router, ActivationEnd, ActivationStart } from '@angular/router';
 @Injectable()
 export class HttpTokenInterceptor implements HttpInterceptor {
 
-  currentUser: any = JSON.parse(sessionStorage.getItem('astuser') || '{}');
+  currentUser: any = JSON.parse(sessionStorage.getItem('asmuser') || '{}');
 
 
   constructor(private router: Router) {
@@ -29,8 +29,8 @@ export class HttpTokenInterceptor implements HttpInterceptor {
         // console.log(hasRoutePermit);
 
         if (!hasRoutePermit) {
-          sessionStorage.removeItem('hftoken');
-          sessionStorage.removeItem('astuser');
+          sessionStorage.removeItem('asmtoken');
+          sessionStorage.removeItem('asmuser');
           localStorage.removeItem('url');
           this.router.navigate(['/login']);
           setTimeout(() => {
@@ -57,7 +57,7 @@ export class HttpTokenInterceptor implements HttpInterceptor {
       // 'Content-Type': 'multipart/form-data',
     };
 
-    const token = sessionStorage.getItem('hftoken');
+    const token = sessionStorage.getItem('asmtoken');
     // const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXRlciIsImV4cCI6MTczNjMxOTI0OH0.EdzX6MptbhkEW4nP3OORey7KHn7Pdb_wl-gnLfJ1WiFxF6dXom1uhP8vJgygzhbs3GSVZckkyJK8SymA2cRemg";
 
 
@@ -72,8 +72,8 @@ export class HttpTokenInterceptor implements HttpInterceptor {
         if (err.status === 401) {
           // || err.status === 403
           if (!this.router.routerState.snapshot.url.includes('login')) {
-            sessionStorage.removeItem('hftoken');
-            sessionStorage.removeItem('astuser');
+            sessionStorage.removeItem('asmtoken');
+            sessionStorage.removeItem('asmuser');
             localStorage.setItem('url', this.router.routerState.snapshot.url)
 
             this.router.navigate(['/login']);

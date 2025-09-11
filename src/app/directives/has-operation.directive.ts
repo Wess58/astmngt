@@ -17,7 +17,7 @@ export class HasOperationDirective {
   @Input()
   set hasOperation(value: string | string[]) {
 
-    this.user = JSON.parse(sessionStorage.getItem('astuser') ?? '{}');
+    this.user = JSON.parse(sessionStorage.getItem('asmuser') ?? '{}');
 
     if (Array.isArray(value)) {
       value.forEach((operation) => {

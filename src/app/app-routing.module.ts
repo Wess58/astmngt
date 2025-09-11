@@ -8,6 +8,7 @@ import { UsersManagementComponent } from './components/users-management/users-ma
 import { RoleMatrixComponent } from './components/role-matrix/role-matrix.component';
 import { LoginComponent } from './auth/login/login.component';
 import { AssetsDetailComponent } from './components/assets/assets-detail/assets-detail.component';
+import { SetPasswordComponent } from './auth/set-password/set-password.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
   {
     path:'login',
     component: LoginComponent
+  },
+  {
+    path: 'reset-password/start',
+    component: SetPasswordComponent
   }
 ];
 

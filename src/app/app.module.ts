@@ -36,6 +36,7 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { ChildDetailsComponent } from './components/assets/child-details/child-details.component';
 import { InputCommaFormatDirective } from './directives/input-comma-format.directive';
 import { AssetCreateComponent } from './components/assets/asset-create/asset-create.component';
+import { SetPasswordComponent } from './auth/set-password/set-password.component';
 
 
 @NgModule({
@@ -65,7 +66,8 @@ import { AssetCreateComponent } from './components/assets/asset-create/asset-cre
     ClickOutsideDirective,
     ChildDetailsComponent,
     InputCommaFormatDirective,
-    AssetCreateComponent
+    AssetCreateComponent,
+    SetPasswordComponent
   ],
   imports: [
     BrowserModule,

@@ -4,21 +4,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MENUS_WITH_PATHS } from "../../app.constants";
 import { ApiService } from '../../services/api.service';
 import { UsersService } from '../../services/users.service';
+import { fadeIn } from '../../animations';
 
 @Component({
   selector: 'app-login',
   standalone: false,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  animations: [
-    trigger('fadeIn', [
-      transition(':enter', [
-        // :enter is alias to 'void => *'
-        style({ opacity: 0 }),
-        animate(600, style({ opacity: 1 })),
-      ]),
-    ]),
-  ],
+  animations: [fadeIn]
 })
 export class LoginComponent implements OnInit {
   username!: ElementRef;
@@ -46,14 +39,18 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     // this.getRoleMatrix();
-    if (sessionStorage.getItem('hftoken')) {
-      // this.getAccount();
+    if (sessionStorage.getItem('asmtoken')) {
+      this.getAccount();
     }
   }
 
   loginUser(): void {
     this.authenticationError = false;
     this.logingIn = true;
+
+    sessionStorage.removeItem('asmtoken');
+    sessionStorage.removeItem('asmuser');
+    localStorage.removeItem('url');
 
     const data = {
       username: this.login.username,
@@ -63,16 +60,9 @@ export class LoginComponent implements OnInit {
     this.usersService.loginUser(data).subscribe(
       {
         next: (res) => {
-          console.log(res);
-          
-          // this.stage = 'verifyOTPStage';
-          // this.login.twoFACode = res.twoFACode;
-          //       this.getAccount();
-
-
-          // this.clearTimeOut();
-          // this.countDown(60);
-
+          // console.log(res);
+          sessionStorage.setItem('asmtoken', res.token);
+          this.getAccount();
         },
         error: (error) => {
           console.log(error);
@@ -91,61 +81,24 @@ export class LoginComponent implements OnInit {
   }
 
 
-  verifyOTP(): void {
-    this.authenticationError = false;
-    this.logingIn = true;
-
-    const data = {
-      otp: this.login.otp.trim(),
-      twoFACode: this.login.twoFACode,
-    }
-
-    // this.apiService.verifyOTP(data).subscribe(
-    //   {
-    //     next: (res) => {
-    //       // console.log(res);
-    //       sessionStorage.setItem('hftoken', res.token);
-
-    //       this.getAccount();
-
-    //     },
-    //     error: (error) => {
-    //       console.log(error);
-
-    //       if (error?.error?.code === 401) {
-    //         this.errorMessage = error?.error?.desc;
-    //       } else {
-    //         this.errorMessage = 'Try again later';
-    //       }
-
-    //       this.authenticationError = true;
-    //       this.logingIn = false;
-    //     },
-    //   }
-    // )
-  }
-
 
 
   getAccount(): void {
-    // this.apiService.getAccount().subscribe(
-    //   {
-    //     next: (res) => {
-    //       // console.log(res);
-    //       sessionStorage.setItem('astuser', JSON.stringify(res.body));
-    //       const redirectUrl = this.menuList.find((menu: any) => menu.title === res.body.menus[0])?.path;
-    //       this.router.navigateByUrl(localStorage.getItem('url') ?? redirectUrl);
-
-    //       // setTimeout(() => {
-    //       //   location.reload();
-    //       // }, 10);
-    //     },
-    //     error: (error) => {
-    //       console.log(error);
-    //       this.logingIn = false;
-    //     }
-    //   }
-    // )
+    this.usersService.getAccount().subscribe(
+      {
+        next: (res) => {
+          // console.log(res);
+          sessionStorage.setItem('asmuser', JSON.stringify(res));
+          // const redirectUrl = this.menuList.find((menu: any) => menu.title === res.body.menus[0])?.path;
+          this.router.navigateByUrl(localStorage.getItem('url') ?? '/assets', { replaceUrl: true });
+        
+        },
+        error: (error) => {
+          console.log(error);
+          this.logingIn = false;
+        }
+      }
+    )
   }
 
 
@@ -227,19 +180,5 @@ export class LoginComponent implements OnInit {
   }
 
 
-  // getRoleMatrix(): void {
-  //   this.apiService.getRoleMatrix().subscribe(
-  //     {
-  //       next: (res) => {
-  //         console.log(res);
-
-  //       },
-  //       error: (error) => {
-  //         console.log(error);
-
-  //       }
-  //     }
-  //   )
-  // }
 
 }

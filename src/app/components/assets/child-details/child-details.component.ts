@@ -11,6 +11,8 @@ import { AssetsService } from '../../../services/assets.service';
 export class ChildDetailsComponent implements OnChanges {
 
   details: any = [];
+  currentImageIndex = 0;
+
 
   @Input() asset: any = {};
   @Input() images: any[] = [];

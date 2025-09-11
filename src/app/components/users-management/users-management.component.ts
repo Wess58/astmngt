@@ -61,7 +61,7 @@ export class UsersManagementComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.currentUser = JSON.parse(localStorage.getItem('astuser') || '{}');
+    this.currentUser = JSON.parse(localStorage.getItem('asmuser') || '{}');
 
     window.scrollTo({ top: 0, behavior: "smooth" });
 

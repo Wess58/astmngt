@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg fixed-top" *ngIf="!router.url.includes('login')" [@fadeIn]>
+<nav class="navbar navbar-expand-lg fixed-top" *ngIf="showNavbar()" [@fadeIn]>
 	<div class="container-fluid">
 
 		<a class="navbar-brand d-flex align-items-center" [routerLink]="userHomeUrl">
@@ -13,13 +13,12 @@
 		<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
 			<ul class="navbar-nav">
 
-				<li class="nav-item" 
-					*ngFor="let menuItem of menusList;index as i" [routerLink]="[menuItem.path]"
+				<li class="nav-item" *ngFor="let menuItem of menusList;index as i" [routerLink]="[menuItem.path]"
 					[ngClass]="{'active-nav-item':router.url.includes(menuItem.path.replace('/',''))}">
 					<!-- [hidden]="!currentUser?.menus?.includes(menuItem.title)" -->
-					<a class="nav-link"> 
+					<a class="nav-link">
 						<span class="icon"><i class="fa-solid {{menuItem.icon}}"></i></span>
-						{{menuItem.title | formatNavTitle }} 
+						{{menuItem.title | formatNavTitle }}
 					</a>
 				</li>
 
@@ -38,13 +37,21 @@
 						</div>
 						<div class="d-inline-flex flex-column me-3">
 							<span>{{currentUser?.name | titlecase}}</span>
-							<span class="role">{{currentUser?.role?.code?.replaceAll('_',' ')}}</span>
+							<span class="role">{{currentUser?.roleName?.replaceAll('_',' ')}}</span>
 						</div>
 						<span><i class="fa-solid fa-sort-down"></i></span>
 					</a>
 					<ul class="dropdown-menu dropdown-menu-end">
+
+						<li class="user-details border-bottom px-3 pt-2 pb-3" (click)="$event.stopPropagation()">
+							<span class="d-block user-email text-light-grey mb-2">{{currentUser.email}} </span>
+							<span class="d-block user-department fw-bold text-grey">{{currentUser.locationName}} </span>
+							<span class="d-block user-department text-light-grey">{{currentUser.departmentName}}
+							</span>
+						</li>
+
 						<li><a class="dropdown-item" (click)="logout()">
-								<span><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+								<span class="dropdown-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
 								Sign Out
 							</a></li>
 					</ul>

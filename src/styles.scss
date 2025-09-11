@@ -52,6 +52,7 @@ html {
   image-rendering: auto !important;
 }
 
+.form-control,
 input,
 select,
 textarea {
@@ -60,7 +61,7 @@ textarea {
   box-shadow: none !important;
   background-clip: padding-box !important;
   color: #5f6063 !important;
-  padding: 10px 12px !important;
+  padding: 10px 12px;
 }
 
 input[type="checkbox"] {
@@ -135,11 +136,11 @@ textarea:hover {
   color: var(--app-light-blue) !important;
 }
 
-.grey-text {
-  color: #80868b !important;
+.text-grey {
+  color: #5f6063 !important;
 }
 
-.light-grey-text,
+.text-light-grey,
 .text-muted {
   color: #80868b !important;
 }
@@ -156,10 +157,6 @@ textarea:hover {
   &:hover {
     border: 2px solid #d11a2a !important;
   }
-}
-
-.outlet {
-  min-height: calc(100vh - 50px);
 }
 
 .container {
@@ -365,7 +362,7 @@ textarea:hover {
       font-size: 0.9rem;
     }
 
-    small{
+    small {
       font-size: 0.8rem;
     }
   }
@@ -419,6 +416,8 @@ textarea:hover {
 
   .image-item {
     height: 150px;
+    cursor: pointer;
+    
     img {
       height: 100%;
       width: 100%;

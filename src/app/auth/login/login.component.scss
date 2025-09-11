@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: calc(100vh - 60px);
 }
 
 .login-card {
@@ -60,14 +60,14 @@
       .fa-lock,
       .fa-user {
         position: absolute;
-        left: 30px;
+        left: 20px;
         top: 15px;
         // padding-top: 10px !important;
       }
 
       input {
         border: 2px solid var(--app-light-blue) !important;
-        padding-left: 50px !important;
+        padding-left: 50px;
 
         &:active,
         &:focus,
@@ -80,7 +80,7 @@
     .eye-icon {
       position: absolute;
       top: 17px;
-      right: 30px;
+      right: 20px;
       cursor: pointer;
     }
 

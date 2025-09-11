@@ -21,7 +21,7 @@ export class SideNavComponent {
 
       if (val instanceof ActivationEnd && !this.currentUser?.id) {
         // console.log(val);
-        this.currentUser = JSON.parse(sessionStorage.getItem('astuser') || '{}');
+        this.currentUser = JSON.parse(sessionStorage.getItem('asmuser') || '{}');
         // console.log(this.currentUser);
         this.userHomeUrl = this.currentUser?.menus?.length ? this.menusList.find((menu: any) => menu.title === this.currentUser?.menus[0])?.path : '';
 

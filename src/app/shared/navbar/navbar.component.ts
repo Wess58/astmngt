@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, ActivationEnd } from '@angular/router';
 import { style, animate, transition, trigger } from '@angular/animations';
 import { MENUS_WITH_PATHS } from "../../app.constants";
+import { UsersService } from '../../services/users.service';
+
 @Component({
   selector: 'app-navbar',
   standalone: false,
@@ -30,16 +32,16 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     public router: Router,
+    private usersService: UsersService
   ) {
     router.events.subscribe((val) => {
 
-      // if (val instanceof ActivationEnd && !this.currentUser?.id) {
-      //   // console.log(val);
-      //   this.currentUser = JSON.parse(sessionStorage.getItem('astuser') || '{}');
-      //   // console.log(this.currentUser);
-      //   this.userHomeUrl = this.currentUser?.menus?.length ? this.menusList.find((menu: any) => menu.title === this.currentUser?.menus[0])?.path : '';
-
-      // }
+      if (val instanceof ActivationEnd && !this.currentUser?.id) {
+        // console.log(val);
+        this.currentUser = JSON.parse(sessionStorage.getItem('asmuser') || '{}');
+        console.log(this.currentUser);
+        // this.userHomeUrl = this.currentUser?.menus?.length ? this.menusList.find((menu: any) => menu.title === this.currentUser?.menus[0])?.path : '';
+      }
 
     });
   }
@@ -47,19 +49,13 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  showNavbar(): boolean {
+    return !this.router.url.includes('login') && !this.router.url.includes('reset-password');
+  }
 
   logout(): void {
-    this.router.navigate(['/login']);
+    this.usersService.logout();
     this.currentUser = {};
-
-    sessionStorage.removeItem('hftoken');
-    sessionStorage.removeItem('astuser');
-    localStorage.removeItem('url');
-
-    setTimeout(() => {
-      location.reload();
-    }, 10);
-
   }
 
 }

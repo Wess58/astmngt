@@ -17,9 +17,61 @@
 
 <div class="tabular-layout-images">
 	@for (file of images; track $index) {
-	<div class="image-item">
+	<div class="image-item" data-bs-toggle="modal" data-bs-target="#assetImageModal">
 		<img class="d-block w-100" [src]="file.uuid ? (file.uuid | sanitizeFileUrl) : file.previewUrl" alt="blob"
 			imageFallback />
 	</div>
 	}
+</div>
+
+
+
+
+<!-- IMAGES MODAL  -->
+<div class="modal fade" id="assetImageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+	data-bs-keyboard="true">
+	<div class="modal-dialog modal-lg modal-fullscreen-sm-down modal-dialog-centered">
+		<div class="modal-content">
+			<!-- <div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Product details</h5>
+					<button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div> -->
+			<div class="modal-body">
+				<div class="image-holder position-relative">
+					<div id="carouselExampleIndicators" class="carousel slide">
+						<div class="carousel-indicators" *ngIf="images.length > 1">
+							@for (item of images; track $index) {
+							<button type="button" data-bs-target="#carouselExampleIndicators"
+								[ngClass]="{'active':$index === currentImageIndex}" (click)="currentImageIndex = $index"
+								[attr.data-bs-slide-to]="$index" aria-current="true"></button>
+							}
+						</div>
+
+						<div class="carousel-inner">
+							<div class="carousel-item" [ngClass]="{'active':isFirst}"
+								*ngFor="let image of images;index as i; first as isFirst">
+								<img class="d-block w-100" [src]="(image.uuid | sanitizeFileUrl)"
+									[alt]="asset.name + 'image'" imageFallback>
+							</div>
+						</div>
+
+						<ng-container *ngIf="images.length > 1">
+							<button class="carousel-control-prev" type="button"
+								data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+								<span class="navigation-icon"> <i class="fa-solid fa-chevron-left"></i>
+								</span>
+							</button>
+							<button class="carousel-control-next" type="button"
+								data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+								<span class="navigation-icon"> <i class="fa-solid fa-chevron-right"></i>
+								</span>
+							</button>
+						</ng-container>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

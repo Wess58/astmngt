@@ -19,25 +19,20 @@
 
 						<p class="instruction">Enter your credentials and click Login</p>
 
-						<div class="form-group row mb-4">
-							<div class="col-md-12">
-								<span><i class="fa-solid fa-user"></i></span>
-								<input type="text" class="form-control" name="username" id="username"
-									placeholder="login" (ngModelChange)="authenticationError = false"
-									[(ngModel)]="login.username" #username data-cy="username" />
-							</div>
+						<div class="form-group position-relative mb-4">
+							<span><i class="fa-solid fa-user"></i></span>
+							<input type="text" class="form-control" name="username" id="username" placeholder="login"
+								(ngModelChange)="authenticationError = false" [(ngModel)]="login.username" #username
+								data-cy="username" />
 						</div>
 
-						<div class="form-group row mb-3">
-							<div class="col-md-12">
-								<span><i class="fa-solid fa-lock"></i></span>
-
-								<input type="password" class="form-control" name="password" id="password"
-									placeholder="password" (ngModelChange)="authenticationError = false"
-									[(ngModel)]="login.password" data-cy="password" />
-								<span><i class="fa-solid eye-icon" [ngClass]="{ 'fa-eye': open, 'fa-eye-slash': !open }"
-										(click)="showPassword()"></i></span>
-							</div>
+						<div class="form-group position-relative mb-3">
+							<span><i class="fa-solid fa-lock"></i></span>
+							<input type="password" class="form-control ps-5" name="password" id="password"
+								placeholder="password" (ngModelChange)="authenticationError = false"
+								[(ngModel)]="login.password" data-cy="password" />
+							<span><i class="fa-solid eye-icon" [ngClass]="{ 'fa-eye': open, 'fa-eye-slash': !open }"
+									(click)="showPassword()"></i></span>
 						</div>
 
 						<!-- <div class="row mb-5">
@@ -55,7 +50,7 @@
 						</div>
 					</form>
 
-					<form class="form" role="form" *ngIf="stage === 'verifyOTPStage'" [@fadeIn]>
+					<!-- <form class="form" role="form" *ngIf="stage === 'verifyOTPStage'" [@fadeIn]>
 						<div class="alert alert-danger" *ngIf="authenticationError && !resendError" data-cy="loginError"
 							[@fadeIn]>
 							<strong>Failed to sign in!</strong> {{ errorMessage }}.
@@ -96,7 +91,7 @@
 									(click)="verifyOTP()">SUBMIT</button>
 							</div>
 						</div>
-					</form>
+					</form> -->
 
 					<!-- <form class="form" role="form" *ngIf="stage === 'verifyTOTPStage'" [@fadeIn]>
 							<div class="alert alert-danger" *ngIf="authenticationError && !resendError" data-cy="loginError"
