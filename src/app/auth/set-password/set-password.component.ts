@@ -72,6 +72,7 @@ export class SetPasswordComponent implements OnInit {
 
   validatePassword(): void {
     this.invalid.length = this.credentials.password.length < 8;
+    this.validateConfirmPassword();
   }
 
   validateConfirmPassword(): void {
@@ -79,7 +80,7 @@ export class SetPasswordComponent implements OnInit {
   }
 
   checkPasswordInputs(): boolean {
-    return !this.credentials.password.length || !this.credentials.confirmPassword.length
+    return !this.credentials.password.length || !this.credentials.confirmPassword.length;
   }
 
   showPassword(id: string): void {
