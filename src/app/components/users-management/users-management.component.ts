@@ -191,7 +191,7 @@ export class UsersManagementComponent implements OnInit {
   }
 
 
-  editUser(): void {
+  editUser(id: string = 'closeEditModal'): void {
     this.performingAction = true;
     this.actionFail = false;
 
@@ -199,7 +199,7 @@ export class UsersManagementComponent implements OnInit {
       {
         next: (res) => {
           this.performingAction = false;
-          this.closeModal('closeEditModal');
+          this.closeModal(id);
           this.getUsers(this.page);
 
           this.toastService.success('User updated successfully!');
