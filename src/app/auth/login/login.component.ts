@@ -120,7 +120,7 @@ export class LoginComponent implements OnInit {
     //       console.log(error);
 
     //       if (error?.error?.code === 401) {
-    //         this.errorMessage = error?.error?.desc;
+    //         this.errorMessage = error?.error?.message;
     //       } else {
     //         this.errorMessage = 'Try again later';
     //       }

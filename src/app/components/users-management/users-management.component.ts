@@ -183,7 +183,7 @@ export class UsersManagementComponent implements OnInit {
           console.log(error);
           this.actionFail = true;
           this.performingAction = false;
-          this.errorMessage = error?.desc ?? 'Please try again in 15 minutes';
+          this.errorMessage = error?.message ?? 'Please try again in 15 minutes';
 
         }
       }
@@ -208,7 +208,7 @@ export class UsersManagementComponent implements OnInit {
           console.log(error);
           this.actionFail = true;
           this.performingAction = false;
-          this.errorMessage = error?.desc ?? 'Please try again in 15 minutes';
+          this.errorMessage = error?.message ?? 'Please try again in 15 minutes';
 
         }
       }
@@ -232,7 +232,7 @@ export class UsersManagementComponent implements OnInit {
           console.log(error);
           this.actionFail = true;
           this.performingAction = false;
-          this.errorMessage = error?.desc ?? 'Please try again in 15 minutes';
+          this.errorMessage = error?.message ?? 'Please try again in 15 minutes';
 
         }
       }
@@ -260,7 +260,7 @@ export class UsersManagementComponent implements OnInit {
   //         console.log(error);
   //         this.actionFail = true;
   //         this.performingAction = false;
-  //         this.errorMessage = error?.desc ?? 'Please try again in 15 minutes';
+  //         this.errorMessage = error?.message ?? 'Please try again in 15 minutes';
 
   //       }
   //     }
