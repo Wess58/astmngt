@@ -139,7 +139,7 @@
 					<tr
 						*ngFor="let asset of assets | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalLength}; index as i">
 						<td>
-							<a class="redirect-link" [routerLink]="['/assets', asset.id]">
+							<a class="redirect-link" [routerLink]="['/asset', asset.id]">
 								<div class="img-holder">
 									<img [src]="(asset.coverImageUrl || asset.media[0] | sanitizeFileUrl)"
 										[alt]="asset.name + ' image'" imageFallback>
@@ -175,7 +175,7 @@
 									Actions
 								</button>
 								<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-									<a class="dropdown-item" [routerLink]="['/assets', asset.id]">
+									<a class="dropdown-item" [routerLink]="['/asset', asset.id]">
 										View
 									</a>
 									<a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createAssetModal"

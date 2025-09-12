@@ -21,7 +21,7 @@ const routes: Routes = [
     component: AssetsListComponent
   },
   {
-    path: 'assets/:id',
+    path: 'asset/:id',
     component: AssetsDetailComponent
   },
   {
