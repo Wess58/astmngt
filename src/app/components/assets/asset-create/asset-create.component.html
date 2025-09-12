@@ -32,7 +32,7 @@
 
 					<div class="form-group col-md-4">
 						<label for="">Category</label>
-						<select class="form-control" name="category" [(ngModel)]="asset.assetCategory.id">
+						<select class="form-control" name="category" [(ngModel)]="asset.assetCategory.id" (change)="setCustomFields()" >
 							<option value="" selected hidden>Select category</option>
 							<option *ngFor="let category of categories;index as i" [value]="category.id">
 								{{category.name}}
@@ -53,6 +53,35 @@
 							placeholder="Enter model number" autocomplete="off">
 					</div>
 
+					@for (field of customFields ; track $index) {
+					<div class="form-group col-md-4" [@fadeIn]>
+						<label [for]="field.code"> {{field.name | titlecase}} <sup class="red-text" *ngIf="field.required">*</sup></label>
+
+						@if (field.formElement === 'TEXT') {
+						<input type="text" class="form-control" [name]="field.code" [(ngModel)]="field.value"
+							[placeholder]="'Enter ' + field.name" autocomplete="off">
+						}
+						@else if (field.formElement === 'NUMBER') {
+						<input type="text" class="form-control" [name]="field.code" [(ngModel)]="field.value"
+							[placeholder]="'Enter ' + field.name" autocomplete="off" appCommasFormat pattern="[0-9]*"
+							inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+						}
+						@else if (field.formElement === 'DATE') {
+						<input type="date" class="form-control" [name]="field.code" [(ngModel)]="field.value"
+							autocomplete="off">
+						}
+						@else if (field.formElement === 'SELECT') {
+						<select class="form-control" [name]="field.code" [(ngModel)]="field.value">
+							<option value="" selected hidden>Select {{field.name}} </option>
+							<option *ngFor="let value of field?.values?.split(',');index as i" [value]="value">
+								{{value}}
+							</option>
+						</select>
+						}
+
+					</div>
+					}
 
 
 					<app-image-upload [coverImageUrl]="asset.coverImageUrl" [inputImages]="assetImages"
@@ -115,7 +144,7 @@
 					<div class="form-group col-md-4">
 						<label>Assigned department</label>
 						<select class="form-control" name="department" [(ngModel)]="asset.department.id"
-							required="required">
+							(change)="filterUsers()" required="required">
 							<option *ngFor="let department of departments;index as i" [value]="department.id">
 								{{department.name}} </option>
 						</select>
@@ -133,7 +162,7 @@
 								(appClickOutside)="openHolder = false" [@fadeInResults]>
 
 								<div class="search-item" (click)="unassignHolder()">
-									<span class="name red-text">Do not assign</span>
+									<span class="name red-text">Do not assign asset</span>
 								</div>
 								<div class="search-item disp-field" *ngFor="let user of filterUsers();"
 									(click)="selectHolder(user)">
@@ -151,7 +180,7 @@
 
 				<!-- STEP 4 VERIFICATION  -->
 				<div class="row" *ngIf="step === 4" [@fadeIn]>
-					<app-child-details [asset]="asset" [images]="assetImages" [isCreate]="true"></app-child-details>
+					<app-child-details [asset]="asset" [customFields]="customFields" [images]="assetImages" [isCreate]="true"></app-child-details>
 				</div>
 
 			</div>

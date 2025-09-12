@@ -30,7 +30,7 @@ export class CategoriesComponent implements OnInit {
 
   showCreateColumn: boolean = false;
   createAnother: boolean = false;
-  columnTypes: string[] = ['Text', 'Number', 'Select'];
+  columnTypes: string[] = ['Text', 'Number', 'Select', 'Date'];
   // TEXT,    CHECKBOX,    RADIO,    TEXTAREA, SELECT
 
   emailInvalid: boolean = false;

@@ -40,6 +40,9 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // this.getRoleMatrix();
     if (sessionStorage.getItem('asmtoken')) {
+
+      console.log('here login');
+      
       this.getAccount();
     }
   }

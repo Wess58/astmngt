@@ -17,12 +17,13 @@ export class ChildDetailsComponent implements OnChanges {
   @Input() asset: any = {};
   @Input() images: any[] = [];
   @Input() isCreate: boolean = false;
+  @Input() customFields: any[] = [];
 
 
   constructor(
     private assetsService: AssetsService
-  ){
-    
+  ) {
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -88,8 +89,11 @@ export class ChildDetailsComponent implements OnChanges {
         title: 'Holder staff ID',
         value: this.asset?.holder?.employeeNumber ?? '—'
       },
-
+     ...(this.isCreate ? this.extractCustomFieldsForCreate() : this.extractCustomFields())
     )
+
+  
+
 
 
     if (!this.isCreate) {
@@ -122,10 +126,49 @@ export class ChildDetailsComponent implements OnChanges {
           value: this.asset.updatedBy ?? '—'
         }
       )
-
     }
   }
 
 
+  extractCustomFields(): any[] {
+    var customFields: any[] = [];
+
+    if (this.asset?.customFieldsData?.length) {
+      const customFieldsData = JSON.parse(this.asset?.customFieldsData);
+
+      customFields = (Object.keys(customFieldsData)).map((key: any) => ({
+        title: this.formatCamelCase(key),
+        value: (parseInt(customFieldsData[key]) ? this.assetsService.formatCurrency(customFieldsData[key]) : customFieldsData[key]) || '—'
+      }));
+    }
+
+    return customFields;
+  }
+
+  extractCustomFieldsForCreate(): any[] {
+    var customFields: any[] = [];
+
+    if (this.customFields?.length) {
+      customFields = this.customFields?.map((field: any) => ({
+        title: field.name,
+        value: (field.formElement === 'NUMBER' ? this.assetsService.formatCurrency(field.value) : field.value) || '—'
+      }));
+    }
+
+    return customFields;
+  }
+
+
+  // extractCustomFieldsInRecordLayout(createCustomFields: any): any[] {
+  //   if (createCustomFields?.length) {
+  //     return Object.assign({}, ...createCustomFields.map((field: any) => ({ [field.name]: field.value || '' })));
+  //   }
+  //   return [];
+  // }
+
+  formatCamelCase(value: string): string {
+    value = String(value.split(/(?=[A-Z])/).join(" ")).toLowerCase();
+    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  }
 
 }

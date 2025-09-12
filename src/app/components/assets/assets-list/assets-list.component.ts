@@ -34,6 +34,9 @@ export class AssetsListComponent implements OnInit {
   assets: any = [];
   loadingAssets = false;
 
+  statuses: string[] = ['ACTIVE', 'DELETED', 'NEW'];
+
+
   page: number = 1;
   itemsPerPage = 20;
   totalLength: any;
@@ -69,6 +72,7 @@ export class AssetsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    
     window.scrollTo({ top: 0, behavior: "smooth" });
     this.setFilterParams();
   }

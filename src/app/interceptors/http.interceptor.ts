@@ -22,12 +22,16 @@ export class HttpTokenInterceptor implements HttpInterceptor {
 
     router.events.subscribe((val) => {
 
-      if (!sessionStorage.getItem('asmtoken') && !this.router.routerState.snapshot.url.includes('login') && !this.router.routerState.snapshot.url.includes('reset-password')) {
-        this.usersService.logout();
+      const checkUrl = !this.router.routerState.snapshot.url.includes('login') &&
+        !this.router.routerState.snapshot.url.includes('reset-password') && (val instanceof ActivationEnd || val instanceof ActivationStart);
+
+      if (!sessionStorage.getItem('asmtoken') && checkUrl) {
+        setTimeout(() => {
+          this.usersService.logout();
+        }, 100);
       }
 
-      if (!this.router.routerState.snapshot.url.includes('login') && !this.router.routerState.snapshot.url.includes('reset-password') && (val instanceof ActivationEnd || val instanceof ActivationStart)
-        && this.currentUser?.menus?.length && val.snapshot?.data['menuCode']?.length) {
+      if (checkUrl && this.currentUser?.menus?.length && val.snapshot?.data['menuCode']?.length) {
         // console.log(val?.snapshot?.data);
         // console.log(this.currentUser?.menus);
 
@@ -60,8 +64,6 @@ export class HttpTokenInterceptor implements HttpInterceptor {
     };
 
     const token = sessionStorage.getItem('asmtoken');
-    // const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXRlciIsImV4cCI6MTczNjMxOTI0OH0.EdzX6MptbhkEW4nP3OORey7KHn7Pdb_wl-gnLfJ1WiFxF6dXom1uhP8vJgygzhbs3GSVZckkyJK8SymA2cRemg";
-
 
     const request = req.clone({
       setHeaders: {

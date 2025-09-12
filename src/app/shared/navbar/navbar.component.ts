@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, ActivationEnd } from '@angular/router';
+import { ActivatedRoute, Router, ActivationEnd, ActivationStart } from '@angular/router';
 import { style, animate, transition, trigger } from '@angular/animations';
 import { MENUS_WITH_PATHS } from "../../app.constants";
 import { UsersService } from '../../services/users.service';
@@ -35,11 +35,10 @@ export class NavbarComponent implements OnInit {
     private usersService: UsersService
   ) {
     router.events.subscribe((val) => {
-
       if (val instanceof ActivationEnd && !this.currentUser?.id) {
         // console.log(val);
         this.currentUser = JSON.parse(sessionStorage.getItem('asmuser') || '{}');
-        console.log(this.currentUser);
+        // console.log(this.currentUser);
         // this.userHomeUrl = this.currentUser?.menus?.length ? this.menusList.find((menu: any) => menu.title === this.currentUser?.menus[0])?.path : '';
       }
 

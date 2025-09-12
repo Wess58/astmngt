@@ -17,7 +17,7 @@
 
 <div class="tabular-layout-images">
 	@for (file of images; track $index) {
-	<div class="image-item" data-bs-toggle="modal" data-bs-target="#assetImageModal">
+	<div class="image-item" [ngClass]="{'no-pointer-events':isCreate}" [attr.data-bs-toggle]="isCreate ? '' : 'modal'" data-bs-target="#assetImageModal">
 		<img class="d-block w-100" [src]="file.uuid ? (file.uuid | sanitizeFileUrl) : file.previewUrl" alt="blob"
 			imageFallback />
 	</div>

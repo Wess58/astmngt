@@ -48,6 +48,11 @@ const routes: Routes = [
     path:'login',
     component: LoginComponent
   },
+  // {
+  //   path: 'login',
+  //   loadComponent: () =>
+  //     import('../app/auth/login/login.component').then(m => m.LoginComponent),
+  // },
   {
     path: 'reset-password/start',
     component: SetPasswordComponent

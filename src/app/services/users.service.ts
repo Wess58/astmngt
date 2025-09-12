@@ -12,7 +12,7 @@ export class UsersService {
   baseUrl = environment.API_ENDPOINT + "/api";
 
   constructor(private httpClient: HttpClient, 
-    public router: Router,
+    private router: Router,
   ) { }
 
   loginUser(data: any): Observable<any> {
@@ -52,15 +52,14 @@ export class UsersService {
   }
 
   logout(): void {
-    this.router.navigate(['/login']);
     sessionStorage.removeItem('asmtoken');
     sessionStorage.removeItem('asmuser');
     localStorage.removeItem('url');
-
+    
+    this.router.navigateByUrl('/login');    
     setTimeout(() => {
       location.reload();
     }, 10);
-
   }
 
 }

@@ -41,10 +41,7 @@
 					<div class="wrap">
 						<select class="form-control" name="status" [(ngModel)]="filters.status" (change)="getAssets(1)">
 							<option value="">All statuses</option>
-							<option value="READ">Read</option>
-							<option value="PENDING">Pending</option>
-							<option value="FAILED">Failed</option>
-							<option value="INVALID">Invalid</option>
+							<option *ngFor="let status of statuses;index as i" [value]="status">{{status}} </option>
 						</select>
 					</div>
 

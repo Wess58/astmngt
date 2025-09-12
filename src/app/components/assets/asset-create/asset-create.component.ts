@@ -6,14 +6,14 @@ import { DepartmentsService } from '../../../services/departments.service';
 import { LocationService } from '../../../services/location.service';
 import { UsersService } from '../../../services/users.service';
 import moment from 'moment';
-import { fadeIn } from '../../../animations';
+import { fadeIn, fadeInResults } from '../../../animations';
 
 @Component({
   selector: 'app-asset-create',
   standalone: false,
   templateUrl: './asset-create.component.html',
   styleUrl: './asset-create.component.scss',
-  animations: [fadeIn]
+  animations: [fadeIn, fadeInResults]
 })
 export class AssetCreateComponent {
 
@@ -24,6 +24,7 @@ export class AssetCreateComponent {
     location: { id: 0 },
     department: { id: 0 }
   };
+  customFields: any = [];
 
   openHolder = false;
   userSearchTerm = '';
@@ -82,6 +83,9 @@ export class AssetCreateComponent {
       this.asset.currentValue = this.assetsService.formatCurrency(this.asset.currentValue ?? '');
       this.userSearchTerm = this.asset?.holder?.name ?? '';
 
+      this.filterUsers();
+      this.setCustomFields();
+
       this.assetImages = [];
       if (this.asset?.media?.length) {
         this.assetImages = JSON.parse(JSON.stringify(
@@ -97,13 +101,54 @@ export class AssetCreateComponent {
         ));
       }
     }
-    // if (changes['asset']) {      
-    // }
+
+    if (changes['categories'] && this.categories?.length) {
+      console.log('categories');
+
+      this.setCustomFields();
+    }
+
+    if (changes['users'] && this.users?.length) {
+      console.log('users');
+
+      this.filterUsers();
+    }
   }
 
-
   filterUsers(): any {
-    return this.users.filter((user: any) => !this.userSearchTerm || user.name.toLowerCase().includes(this.userSearchTerm.toLowerCase()))
+    return this.users.filter((user: any) => user.department.id === +this.asset.department.id && (
+      !this.userSearchTerm || (
+        user.name.toLowerCase().includes(this.userSearchTerm.toLowerCase()))
+    ));
+  }
+
+  setCustomFields(): void {
+    this.customFields = [];
+    const category: any = this.categories.find((category: any) => +this.asset.assetCategory.id === category.id);
+    
+    if (category?.customFields?.length) {
+      this.customFields = JSON.parse(JSON.stringify(
+        category.customFields.filter((field: any) => field.code && field.status === 'ACTIVE')
+      ));
+
+      this.customFields.forEach((field: any) => {
+        if (field.values) field.value = field.values.split(',')[0];
+      });
+
+      // if this.customFields is created 
+      if (this.asset.id) this.setCustomFieldsForEdit();
+    }
+  }
+
+  setCustomFieldsForEdit(): void {
+    if (this.asset?.customFieldsData?.length) {
+      const customFieldsData = JSON.parse(this.asset?.customFieldsData);
+      this.customFields.forEach((field: any) => {
+        (Object.keys(customFieldsData)).forEach((key: any) => {
+          if (field.code === key) field.value = field.formElement === 'NUMBER' ? this.assetsService.formatCurrency(customFieldsData[key]) : customFieldsData[key];
+        });
+      });
+    }
   }
 
   selectHolder(holder: any): void {
@@ -227,6 +272,13 @@ export class AssetCreateComponent {
     asset.purchaseCost = +(asset.purchaseCost?.replace(/,/g, ''));
     asset.currentValue = +(asset.currentValue?.replace(/,/g, ''));
     asset.depreciation = +asset.depreciation || 0;
+
+    if (this.customFields?.length) {
+      asset.customFieldsData = '';
+      asset.customFieldsData = JSON.stringify(
+        Object.assign({}, ...this.customFields.map((field: any) => ({ [field.code]: field.value || '' })))
+      );
+    }
 
     !asset?.coverImageUrl?.length ? asset.coverImageUrl = this.assetImages[0].uuid : '';
     asset.media = this.assetImages.filter((image: any) => image.uuid !== asset.coverImageUrl).map((image: any) => image.uuid);
