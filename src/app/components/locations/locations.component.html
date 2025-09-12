@@ -80,7 +80,7 @@
 						<th scope="col">Address</th>
 						<th scope="col">Coordinates</th>
 						<th scope="col">Type</th>
-						<th scope="col">Contact details</th>
+						<!-- <th scope="col">Contact details</th> -->
 						<th scope="col">Status</th>
 						<th scope="col">Created on</th>
 						<th scope="col" class="text-center" width="100px">
@@ -95,10 +95,10 @@
 						<td> {{ location.address }} </td>
 						<td> {{ location.coordinates }} </td>
 						<td> <strong> {{ location.type }} </strong> </td>
-						<td>
+						<!-- <td>
 							<span class="d-block">{{ location.msisdn ?? '—' }}</span>
 							<span class="d-block text-muted">{{ location.email ?? '—' }}</span>
-						</td>
+						</td> -->
 						<td>
 							<span class="badge" [ngClass]="{
 								'badge-success':location?.status === 'ACTIVE',
