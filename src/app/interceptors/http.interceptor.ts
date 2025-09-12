@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Router, ActivationEnd, ActivationStart } from '@angular/router';
+import { UsersService } from '../services/users.service';
 
 @Injectable()
 export class HttpTokenInterceptor implements HttpInterceptor {
@@ -14,9 +15,17 @@ export class HttpTokenInterceptor implements HttpInterceptor {
   currentUser: any = JSON.parse(sessionStorage.getItem('asmuser') || '{}');
 
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+    private usersService: UsersService
+
+  ) {
 
     router.events.subscribe((val) => {
+
+      if (!sessionStorage.getItem('asmtoken')) {
+        this.usersService.logout();
+      }
+
       if (!this.router.routerState.snapshot.url.includes('login') && (val instanceof ActivationEnd || val instanceof ActivationStart)
         && this.currentUser?.menus?.length && val.snapshot?.data['menuCode']?.length) {
         // console.log(val?.snapshot?.data);
@@ -25,22 +34,15 @@ export class HttpTokenInterceptor implements HttpInterceptor {
         const hasRoutePermit = val.snapshot.data['menuCode'].some((code: any) =>
           this.currentUser?.menus?.includes(code)
         );
-
         // console.log(hasRoutePermit);
 
         if (!hasRoutePermit) {
-          sessionStorage.removeItem('asmtoken');
-          sessionStorage.removeItem('asmuser');
-          localStorage.removeItem('url');
-          this.router.navigate(['/login']);
-          setTimeout(() => {
-            location.reload();
-          }, 10);
+          this.usersService.logout();
         }
       }
     });
-
   }
+
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
