@@ -19,13 +19,13 @@ import { Toast } from '../../services/toast.model';
     trigger('fadeInRight', [
       transition(':enter', [
         // :enter is alias to 'void => *'
-        style({ opacity: 0, marginRight: -100 }),
+        style({ opacity: 0, marginRight: -200 }),
         animate("200ms ease-in-out", style({ opacity: 1, marginRight: 0 })),
       ]),
       transition(':leave', [
         // :enter is alias to 'void => *'
         style({ opacity: 1, marginRight: 0, transform: 'scale(1)' }),
-        animate("150ms", style({ opacity: 0, marginRight: -100, transform: 'scale(0.75)' })),
+        animate("150ms ease-in-out", style({ opacity: 0, marginRight: -200, transform: 'scale(0.75)' })),
       ]),
     ]),
   ],

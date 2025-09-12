@@ -4,7 +4,6 @@
 // @import "./assets/css/font-montserrat.css";
 @import "../node_modules/@fortawesome/fontawesome-free/css/all.css";
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
-// @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Manrope:wght@200..800&display=swap');
 
 // ng build && sudo docker build -t melioratech/hfc-credit-card-stmt-web:1.0.1 . && sudo docker push melioratech/hfc-credit-card-stmt-web:1.0.1 && kubectldev scale --replicas=0 deployment/hfc-credit-card-stmt-web && kubectldev scale --replicas=1 deployment/hfc-credit-card-stmt-web
 
@@ -413,11 +412,12 @@ textarea:hover {
   grid-template-columns: repeat(auto-fill, 150px);
   gap: 0 15px;
   margin: 20px 0;
+  padding-left: 10px;
 
   .image-item {
     height: 150px;
     cursor: pointer;
-    
+
     img {
       height: 100%;
       width: 100%;
@@ -504,8 +504,8 @@ textarea:hover {
       .img-holder {
         width: 60px;
         height: 60px;
-        border: 1px solid #f1f1f1;
-        border-radius: 12px;
+        border: 1px solid #e1e1e1;
+        border-radius: 50%;
         overflow: hidden;
         margin-right: 20px;
         background-color: #f1f1f1;

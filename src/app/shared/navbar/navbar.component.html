@@ -44,9 +44,12 @@
 					<ul class="dropdown-menu dropdown-menu-end">
 
 						<li class="user-details border-bottom px-3 pt-2 pb-3" (click)="$event.stopPropagation()">
-							<span class="d-block user-email text-light-grey mb-2">{{currentUser.email}} </span>
-							<span class="d-block user-department fw-bold text-grey">{{currentUser.locationName}} </span>
-							<span class="d-block user-department text-light-grey">{{currentUser.departmentName}}
+							<span appTooltip="Email address" tooltipPosition="left"
+								class="d-block user-email text-light-grey mb-2">{{currentUser.email}} </span>
+							<span appTooltip="Your Location" tooltipPosition="left"
+								class="d-block user-department fw-bold text-grey">{{currentUser.locationName}} </span>
+							<span appTooltip="Your department" tooltipPosition="left"
+								class="d-block user-department text-light-grey">{{currentUser.departmentName}}
 							</span>
 						</li>
 

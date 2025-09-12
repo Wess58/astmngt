@@ -150,7 +150,7 @@ export class RoleMatrixComponent implements OnInit {
 
           this.getRoles();
           this.getMenusAndOperations();
-          this.toastService.success('Role create request submitted!');
+          this.toastService.success('Role created submitted!');
 
         },
         error: (error) => {
@@ -175,7 +175,7 @@ export class RoleMatrixComponent implements OnInit {
         next: () => {
           this.createEditRole = false;
           this.closeModal('closeEditModal');
-          this.toastService.success('Role edit request submitted!');
+          this.toastService.success('Role edited submitted!');
 
           this.getRoles();
           this.getMenusAndOperations();
