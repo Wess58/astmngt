@@ -119,6 +119,11 @@ export class LocationsComponent implements OnInit {
         next: (res) => {
 
           this.performingAction = false;
+          this.closeModal('closeEditModal');
+          this.getLocations(this.page);
+
+          this.toastService.success('Location created successfully!');
+
           // this.setLocationPassword('closeEditModal', 'CREATE');
 
         },

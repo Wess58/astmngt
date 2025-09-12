@@ -125,7 +125,6 @@ export class AssetsListComponent implements OnInit {
   }
 
 
-
   getAssets(page: number): void {
 
     this.page = page ?? 1;
